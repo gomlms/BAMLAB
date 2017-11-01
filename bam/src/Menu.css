@@ -1,0 +1,29 @@
+
+.leftSide {
+  float: left;
+  margin-left: 10px;
+  text-align: left;
+  display: inline-block;
+}
+
+.site {
+  display: inline-block;
+  float: left;
+  width: 100%;
+}
+
+.slider {
+  display: inline-block;
+}
+
+.slidecontainer {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.gcode {
+  display: inline-block;
+  text-align: right;
+  float: right;
+  margin-right: 15px;
+}
