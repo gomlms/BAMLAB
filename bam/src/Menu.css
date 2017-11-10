@@ -25,5 +25,10 @@
   display: inline-block;
   text-align: right;
   float: right;
-  margin-right: 15px;
+  margin-right: 10px;
+}
+
+.gcodeHolder {
+  overflow-y: auto;
+  height: 97vh;
 }
