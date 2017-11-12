@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import './Menu.css';
 import Slider from 'react-rangeslider';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import Layer from './Layer.js';
 
 class Menu extends Component {
   constructor(props, context) {
@@ -15,8 +16,16 @@ class Menu extends Component {
     this.state = {
       patternDropdownOpen: false,
       depthValue: '20',
-      radiusValue: 1
+      radiusValue: 1,
+      numLayers: 1,
+      pointsLayer: 1
     };
+  }
+
+  onAddLayer = () => {
+    this.setstate({
+      numLayers: this.state.numLayers + 1
+    });
   }
 
   toggle() {
@@ -39,6 +48,12 @@ class Menu extends Component {
   }
 
   render(){
+    const children = [];
+
+    for(var i = 1; i <= this.state.numLayers; i+=1){
+      children.push(<Layer numLayers={this.state.numLayers} pointsLayer={this.state.pointsLayer} amountDispersed={this.state.amountDispersed} radius={this.state.radius} curLayer={i}/>);
+    };
+
     return(
       <div className='site'>
         <div className='leftSide'>
@@ -84,7 +99,7 @@ class Menu extends Component {
           <div>
             <form onSubmit={this.handleSubmitDepth}>
               <label>
-                Radius:
+                Amount Dispersed:
                 <input type="text" value={this.state.depthValue} onChange={this.handleChangeDepth} />
               </label>
               <input type="submit" value="Submit" />
@@ -93,7 +108,7 @@ class Menu extends Component {
           <div>
             <form onSubmit={this.handleSubmitDepth}>
               <label>
-                Amount Dispersed:
+                Radius:
                 <input type="text" value={this.state.depthValue} onChange={this.handleChangeDepth} />
               </label>
               <input type="submit" value="Submit" />
@@ -101,114 +116,7 @@ class Menu extends Component {
           </div>
         </div>
         <div className='gcodeHolder'>
-          <p className='gcode'>
-          M118 Cold Extrusion<br />
-          M302 S0<br />
-          G90<br />
-          M117 Calibration<br />
-          G0 Z45 F6000<br />
-          M117 Homing X and Y<br />
-          G28 X Y<br />
-          M117 Homing Z<br />
-          G0 X45  Y100<br />
-          G28 Z<br />
-          G90<br />
-          M117 Centering Needle Over Beaker<br />
-          G0  Z45<br />
-          G0 X137.50 Y67.50<br />
-
-          G90<br />
-          M117 Centering over Beaker<br />
-          G0  Z45 ; Raise to just above Beaker Rim<br />
-          G0 X137.50 Y67.<br />
-          M117 Switch to Relative Coordinates<br />
-          G91; Relative Coordiantes<br />
-
-
-          M117 Bottom of Center<br />
-          G1 Z{Math.trunc(this.state.depthValue * -3/2)}<br />
-          G0 F4000<br />
-          G1 E50<br />
-          M400<br />
-          G4 S15<br />
-          M400<br />
-          G0 F4000<br />
-          G1 E-25<br />
-          G4 S5<br />
-          G1 Z{Math.trunc(this.state.depthValue / 2)}<br />
-  <br />
-          M117 Top of Center<br />
-          G0 F4000<br />
-          G1 E40<br />
-          M400<br />
-          G4 S10<br />
-          M400<br />
-          G1 E-25<br />
-          G4 S5<br />
-          G1 Z{Math.trunc(this.state.depthValue)}<br />
-  <br />
-  <br />
-          M117 Top Right<br />
-          G0 X{Math.trunc(this.state.radiusValue * 15)} Y{Math.trunc(this.state.radiusValue * 15)}<br />
-          G1 Z{Math.trunc(this.state.depthValue * -1)}<br />
-          G0 F4000<br />
-          G1 E30<br />
-          M400<br />
-          G4 S10<br />
-          M400<br />
-          G1 E-25<br />
-          G4 S5<br />
-          G1 Z20<br />
-  <br />
-  <br />
-          M117 Bottom Right<br />
-          G1 Y{Math.trunc(this.state.radiusValue * -30)}<br />
-          G1 Z{Math.trunc(this.state.depthValue * -1)}<br />
-          G0 F4000<br />
-          G1 E30<br />
-          M400<br />
-          G4 S10<br />
-          M400<br />
-          G1 E-25<br />
-          G4 S5<br />
-          G1 Z20<br />
-  <br />
-  <br />
-          M117 Bottom Left<br />
-          G1 X{Math.trunc(this.state.radiusValue * -30)}<br />
-          G1 Z{Math.trunc(this.state.depthValue * -1)}<br />
-          G0 F4000<br />
-          G1 E30<br />
-          M400<br />
-          G4 S10<br />
-          M400<br />
-          G1 E-25<br />
-          G4 S5<br />
-          G1 Z20<br />
-  <br />
-  <br />
-          M117 Top Left<br />
-          G1 Y{Math.trunc(this.state.radiusValue * 30)}<br />
-          G1 Z{Math.trunc(this.state.depthValue * -1)}<br />
-          G0 F4000<br />
-          G1 E30<br />
-          M400<br />
-          G4 S10<br />
-          M400<br />
-          G1 E-25<br />
-          G4 S5<br />
-          G1 Z20<br />
-  <br />
-  <br />
-
-          M117 Homing...<br />
-          G90 ; Back to Absolute Coordinates<br />
-          G0  Z45<br />
-          G0 X137.50 Y67.50<br />
-  <br />
-          M117 Finished Deposition<br />
-          G4 P500
-          </p>
+          {children}
         </div>
       </div>
     );
