@@ -1,22 +1,21 @@
 import React, {Component} from 'react';
 import './Menu.css';
+import Slider from 'react-rangeslider';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 class Menu extends Component {
-  constructor(props) {
-    super(props);
+  constructor(props, context) {
+    super(props, context);
 
     this.toggle = this.toggle.bind(this);
     this.handleChangeRadius = this.handleChangeRadius.bind(this);
-    this.handleSubmitRadius = this.handleSubmitRadius.bind(this);
     this.handleChangeDepth = this.handleChangeDepth.bind(this);
     this.handleSubmitDepth = this.handleSubmitDepth.bind(this);
 
     this.state = {
       dropdownOpen: false,
-      firstZ: "Z-30",
-      depthValue: '',
-      radiusValue: ''
+      depthValue: '20',
+      radiusValue: 1
     };
   }
 
@@ -26,13 +25,8 @@ class Menu extends Component {
     });
   }
 
-  handleChangeRadius(event) {
-    this.setState({radiusValue: event.target.value});
-  }
-
-  handleSubmitRadius(event) {
-    console.log('A new height was submitted: ' + this.state.radiusValue);
-    event.preventDefault();
+  handleChangeRadius = (value) => {
+    this.setState({radiusValue: value});
   }
 
   handleChangeDepth(event) {
@@ -58,9 +52,9 @@ class Menu extends Component {
               </DropdownToggle>
               <DropdownMenu>
                 <DropdownItem header>Header</DropdownItem>
-                <DropdownItem disabled>Action</DropdownItem>
-                <DropdownItem>Another Action</DropdownItem>
                 <DropdownItem divider />
+                <DropdownItem>Action</DropdownItem>
+                <DropdownItem>Another Action</DropdownItem>
                 <DropdownItem>Another Action</DropdownItem>
               </DropdownMenu>
             </Dropdown>
@@ -75,13 +69,15 @@ class Menu extends Component {
             </form>
           </div>
           <div>
-            <form onSubmit={this.handleSubmitRadius}>
-              <label>
-                Radius:
-                <input type="text" value={this.state.radiusValue} onChange={this.handleChangeRadius} />
-              </label>
-              <input type="submit" value="Submit" />
-            </form>
+            <h3>Radius</h3>
+            <Slider
+              value={this.state.radiusValue}
+              orientation="horizontal"
+              onChange={this.handleChangeRadius}
+              min = {0}
+              step = {0.25}
+              max = {5}
+            />
           </div>
         </div>
         <div className='gcodeHolder'>
@@ -109,8 +105,8 @@ class Menu extends Component {
           G91; Relative Coordiantes<br />
 
 
-          M117 Center Bottom<br />
-          G1 {this.state.firstZ}<br />
+          M117 Bottom of Center<br />
+          G1 Z{Math.trunc(this.state.depthValue * -3/2)}<br />
           G0 F4000<br />
           G1 E50<br />
           M400<br />
@@ -119,9 +115,9 @@ class Menu extends Component {
           G0 F4000<br />
           G1 E-25<br />
           G4 S5<br />
-          G1 Z10<br />
+          G1 Z{Math.trunc(this.state.depthValue / 2)}<br />
   <br />
-          M117 Center Top<br />
+          M117 Top of Center<br />
           G0 F4000<br />
           G1 E40<br />
           M400<br />
@@ -129,12 +125,12 @@ class Menu extends Component {
           M400<br />
           G1 E-25<br />
           G4 S5<br />
-          G1 Z20<br />
+          G1 Z{Math.trunc(this.state.depthValue)}<br />
   <br />
   <br />
           M117 Top Right<br />
-          G0 X15 Y15<br />
-          G1 Z-20<br />
+          G0 X{Math.trunc(this.state.radiusValue * 15)} Y{Math.trunc(this.state.radiusValue * 15)}<br />
+          G1 Z{Math.trunc(this.state.depthValue * -1)}<br />
           G0 F4000<br />
           G1 E30<br />
           M400<br />
@@ -146,8 +142,8 @@ class Menu extends Component {
   <br />
   <br />
           M117 Bottom Right<br />
-          G1 Y-30<br />
-          G1 Z-20<br />
+          G1 Y{Math.trunc(this.state.radiusValue * -30)}<br />
+          G1 Z{Math.trunc(this.state.depthValue * -1)}<br />
           G0 F4000<br />
           G1 E30<br />
           M400<br />
@@ -159,8 +155,8 @@ class Menu extends Component {
   <br />
   <br />
           M117 Bottom Left<br />
-          G1 X-30<br />
-          G1 Z-20<br />
+          G1 X{Math.trunc(this.state.radiusValue * -30)}<br />
+          G1 Z{Math.trunc(this.state.depthValue * -1)}<br />
           G0 F4000<br />
           G1 E30<br />
           M400<br />
@@ -172,8 +168,8 @@ class Menu extends Component {
   <br />
   <br />
           M117 Top Left<br />
-          G1 Y30<br />
-          G1 Z-20<br />
+          G1 Y{Math.trunc(this.state.radiusValue * 30)}<br />
+          G1 Z{Math.trunc(this.state.depthValue * -1)}<br />
           G0 F4000<br />
           G1 E30<br />
           M400<br />
