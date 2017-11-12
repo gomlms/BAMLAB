@@ -5,7 +5,7 @@ class ThirdPoint extends Component {
     super(props, context);
 
     this.state = {
-
+      
     };
   }
 
