@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import './Menu.css';
 import Slider from 'react-rangeslider';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import FirstPoint from './FirstPoint.js';
 
 class Menu extends Component {
   constructor(props, context) {
@@ -100,7 +99,6 @@ class Menu extends Component {
               <input type="submit" value="Submit" />
             </form>
           </div>
-          <FirstPoint />
         </div>
         <div className='gcodeHolder'>
           <p className='gcode'>

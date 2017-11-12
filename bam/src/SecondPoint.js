@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
 
-class FirstPoint extends Component {
+class SecondPoint extends Component {
   constructor(props, context) {
     super(props, context);
 
     this.state = {
-      
+
     };
   }
 
