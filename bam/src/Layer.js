@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import FirstPoint from './FirstPoint.js';
-import SecondPoint from './SecondPoint.js';
 
 class Layer extends Component {
   constructor(props, context) {
@@ -17,9 +16,9 @@ class Layer extends Component {
 
   render(){
     let point = [];
-
+    console.log("POOP" + this.state.numLayers + " " + this.state.curLayer);
     if(this.state.pointsLayer == 1){
-      point.push(<p>HI</p>);
+      point.push(<FirstPoint key={this.state.curLayer} numLayers={this.state.numLayers} radius={this.state.radius} curLayer={this.state.curLayer} amountDispersed={this.state.amountDispersed}/>);
     }
 
     return(

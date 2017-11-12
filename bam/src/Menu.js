@@ -10,22 +10,15 @@ class Menu extends Component {
 
     this.toggle = this.toggle.bind(this);
     this.handleChangeRadius = this.handleChangeRadius.bind(this);
-    this.handleChangeDepth = this.handleChangeDepth.bind(this);
-    this.handleSubmitDepth = this.handleSubmitDepth.bind(this);
 
     this.state = {
       patternDropdownOpen: false,
       depthValue: '20',
-      radiusValue: 1,
+      radius: 1,
       numLayers: 1,
-      pointsLayer: 1
+      pointsLayer: 1,
+      amountDispersed: 20
     };
-  }
-
-  onAddLayer = () => {
-    this.setstate({
-      numLayers: this.state.numLayers + 1
-    });
   }
 
   toggle() {
@@ -35,23 +28,21 @@ class Menu extends Component {
   }
 
   handleChangeRadius = (value) => {
-    this.setState({radiusValue: value});
+    this.setState({radius: value});
   }
 
-  handleChangeDepth(event) {
-    this.setState({depthValue: event.target.value});
+  handleChangeLayers = (value) => {
+    this.setState({numLayers: value});
   }
 
-  handleSubmitDepth(event) {
-    console.log('A new depth was submitted: ' + this.state.depthValue);
-    event.preventDefault();
+  handleAmountDispersed = (value) => {
+    this.setState({amountDispersed: value});
   }
 
   render(){
     const children = [];
-
-    for(var i = 1; i <= this.state.numLayers; i+=1){
-      children.push(<Layer numLayers={this.state.numLayers} pointsLayer={this.state.pointsLayer} amountDispersed={this.state.amountDispersed} radius={this.state.radius} curLayer={i}/>);
+    for(var i = 0; i <= this.state.numLayers; i+=1){
+      children.push(<Layer key = {i} curLayer={i} numLayers={this.state.numLayers} pointsLayer={this.state.pointsLayer} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />);
     };
 
     return(
@@ -77,9 +68,9 @@ class Menu extends Component {
           <div>
             <h3>Number of Layers</h3>
             <Slider
-              value={this.state.radiusValue}
+              value={this.state.numLayers}
               orientation="horizontal"
-              onChange={this.handleChangeRadius}
+              onChange={this.handleChangeLayers}
               min = {1}
               step = {1}
               max = {5}
@@ -97,19 +88,19 @@ class Menu extends Component {
             />
           </div>
           <div>
-            <form onSubmit={this.handleSubmitDepth}>
+            <form onSubmit={this.handleAmountDispersed}>
               <label>
                 Amount Dispersed:
-                <input type="text" value={this.state.depthValue} onChange={this.handleChangeDepth} />
+                <input type="text" value={this.state.amountDispersed} onChange={this.handleAmountDispersed} />
               </label>
               <input type="submit" value="Submit" />
             </form>
           </div>
           <div>
-            <form onSubmit={this.handleSubmitDepth}>
+            <form onSubmit={this.handleChangeRadius}>
               <label>
                 Radius:
-                <input type="text" value={this.state.depthValue} onChange={this.handleChangeDepth} />
+                <input type="text" value={this.state.radius} onChange={this.handleChangeRadius} />
               </label>
               <input type="submit" value="Submit" />
             </form>
