@@ -13,7 +13,8 @@ class ThirdPoint extends Component {
   }
 
   render(){
-    return(
+    return
+      <p>
       M117 Three point layer<br />
       G1 X{Math.trunc(this.state.radius)}<br />
       G1 Z{Math.trunc(-20*this.state.curLayer/this.state.numLayers)}<br />
@@ -48,6 +49,7 @@ class ThirdPoint extends Component {
       G1 E-25<br />
       G4 S5<br />
       G1 Z{Math.trunc(20*this.state.curLayer/this.state.numLayers)}<br />
+      </p>
     );
   }
 }
