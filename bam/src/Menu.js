@@ -13,7 +13,7 @@ class Menu extends Component {
     this.handleSubmitDepth = this.handleSubmitDepth.bind(this);
 
     this.state = {
-      dropdownOpen: false,
+      patternDropdownOpen: false,
       depthValue: '20',
       radiusValue: 1
     };
@@ -21,7 +21,7 @@ class Menu extends Component {
 
   toggle() {
     this.setState({
-      dropdownOpen: !this.state.dropdownOpen
+      patternDropdownOpen: !this.state.patternDropdownOpen
     });
   }
 
@@ -46,7 +46,7 @@ class Menu extends Component {
             <h1>Bam Lab G-Code Generator</h1>
           </div>
           <div>
-            <Dropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+            <Dropdown isOpen={this.state.patternDropdownOpen} toggle={this.toggle}>
               <DropdownToggle caret>
                 Pattern
               </DropdownToggle>
@@ -60,24 +60,44 @@ class Menu extends Component {
             </Dropdown>
           </div>
           <div>
+            <h3>Number of Layers</h3>
+            <Slider
+              value={this.state.radiusValue}
+              orientation="horizontal"
+              onChange={this.handleChangeRadius}
+              min = {1}
+              step = {1}
+              max = {5}
+            />
+          </div>
+          <div>
+            <h3>Points per Layer</h3>
+            <Slider
+              value={this.state.radiusValue}
+              orientation="horizontal"
+              onChange={this.handleChangeRadius}
+              min = {1}
+              step = {1}
+              max = {3}
+            />
+          </div>
+          <div>
             <form onSubmit={this.handleSubmitDepth}>
               <label>
-                Depth:
+                Radius:
                 <input type="text" value={this.state.depthValue} onChange={this.handleChangeDepth} />
               </label>
               <input type="submit" value="Submit" />
             </form>
           </div>
           <div>
-            <h3>Radius</h3>
-            <Slider
-              value={this.state.radiusValue}
-              orientation="horizontal"
-              onChange={this.handleChangeRadius}
-              min = {0}
-              step = {0.25}
-              max = {5}
-            />
+            <form onSubmit={this.handleSubmitDepth}>
+              <label>
+                Amount Dispersed:
+                <input type="text" value={this.state.depthValue} onChange={this.handleChangeDepth} />
+              </label>
+              <input type="submit" value="Submit" />
+            </form>
           </div>
         </div>
         <div className='gcodeHolder'>
