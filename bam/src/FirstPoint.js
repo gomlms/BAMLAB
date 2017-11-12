@@ -5,13 +5,13 @@ class FirstPoint extends Component {
     super(props, context);
 
     this.state = {
-      
+      firstX: 0
     };
   }
 
   render(){
     return(
-
+      <h1>{this.state.firstX}</h1>
     );
   }
 }
