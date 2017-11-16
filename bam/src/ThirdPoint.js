@@ -17,7 +17,7 @@ class ThirdPoint extends Component {
       <p>
       M117 Three point layer<br />
       G1 X{Math.trunc(this.state.radius)}<br />
-      G1 Z{Math.trunc(-20*this.state.curLayer/this.state.numLayers)}<br />
+      G1 Z{Math.trunc(-100 * this.state.curLayer/(this.state.numLayers + 1))}<br />
       G0 F4000<br />
       G1 E{this.state.amountDispursed}<br />
       M400<br />
@@ -26,9 +26,9 @@ class ThirdPoint extends Component {
       G0 F4000<br />
       G1 E-25<br />
       G4 S5<br />
-      G1 Z{Math.trunc(20*this.state.curLayer/this.state.numLayers)}<br />
+      G1 Z{Math.trunc(100 * this.state.curLayer/(this.state.numLayers + 1))}<br />
       G1 X0<br />
-      G1 Z{Math.trunc(-20*this.state.curLayer/this.state.numLayers)}<br />
+      G1 Z{Math.trunc(100 *this.state.curLayer/(this.state.numLayers + 1))}<br />
       G0 F4000<br />
       G1 E{this.state.amountDispursed}<br />
       M400<br />
@@ -37,9 +37,9 @@ class ThirdPoint extends Component {
       G0 F4000<br />
       G1 E-25<br />
       G4 S5<br />
-      G1 Z{Math.trunc(20*this.state.curLayer/this.state.numLayers)}<br />
+      G1 Z{Math.trunc(100 * this.state.curLayer/(this.state.numLayers + 1))}<br />
       G1 X{-Math.trunc(this.state.radius)}<br />
-      G1 Z{Math.trunc(-20*this.state.curLayer/this.state.numLayers)}<br />
+      G1 Z{Math.trunc(-100 * this.state.curLayer/(this.state.numLayers + 1))}<br />
       G0 F4000<br />
       G1 E{this.state.amountDispursed}<br />
       M400<br />
@@ -48,7 +48,7 @@ class ThirdPoint extends Component {
       G0 F4000<br />
       G1 E-25<br />
       G4 S5<br />
-      G1 Z{Math.trunc(20*this.state.curLayer/this.state.numLayers)}<br />
+      G1 Z{Math.trunc(100 * this.state.curLayer/(this.state.numLayers + 1))}<br />
       </p>
     );
   }
