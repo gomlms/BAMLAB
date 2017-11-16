@@ -18,7 +18,7 @@ class Layer extends Component {
   render(){
     let point = [];
     var i = 0;
-
+    console.log(this.state.pointsLayer + "COOL");
     if(this.state.pointsLayer == 1){
       point.push(<FirstPoint key={this.state.curLayer} numLayers={this.state.numLayers} radius={this.state.radius} curLayer={this.state.curLayer} amountDispersed={this.state.amountDispersed}/>);
     } else if(this.state.pointsLayer == 2){

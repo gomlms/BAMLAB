@@ -45,9 +45,11 @@ class Menu extends Component {
 
   render(){
     const children = [];
+    var layer;
+    
     for(var i = 0; i < this.state.numLayers; i+=1){
-      console.log("POOP");
-      children.push(<Layer key = {i} curLayer={i} numLayers={this.state.numLayers} pointsLayer={this.state.pointsLayer} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />);
+      layer = <Layer key = {i} curLayer={i} numLayers={this.state.numLayers} pointsLayer={this.state.pointsLayer} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
+      children.push(layer);
     };
 
     return(
