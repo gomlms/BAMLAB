@@ -2,28 +2,29 @@
 .leftSide {
   float: left;
   height: 97vh;
-  margin-left: 10px;
+  padding-left: 15px;
   text-align: left;
   display: inline-block;
   background-color: lightblue;
   background-image: url("sochol-web.jpg");
-  background-size: contain;
+  background-size: cover;
+  width: 50%;
+  border-style: double;
+  border-right: 5px solid black;
 }
 
+.title {
+  border: outset;
+  border-width: medium;
+  font-style: italic;
+  text-decoration-color: blue;
+}
 .site {
   display: inline-block;
   float: left;
   width: 100%;
   background-color: lightblue;
-}
-
-.slider {
-  display: inline-block;
-}
-
-.slidecontainer {
-  display: inline-block;
-  margin-left: 20px;
+  outline-style: outset;
 }
 
 .gcode {
@@ -39,6 +40,9 @@
   background-color: lightblue;
   border-style: double;
   text-align: right;
-  background-image: url("bam.jpg");
-  background-size: contain;
+  font-weight: bold;
+  padding-right: 15px;
+  border-left: 5px solid black;
+  background-image: url("BAM-Tilt2.png");
+  background-size: cover;
 }

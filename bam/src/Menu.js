@@ -111,7 +111,7 @@ class Menu extends Component {
       <div className='site'>
         <div className='leftSide'>
           <div className='title'>
-            <h1>Bam Lab G-Code Generator</h1>
+            <h1>BLG - Bam Lab G-Code Generator</h1>
           </div>
       <div>
       <Buttons buttonPressed={this.buttonPressed} />
