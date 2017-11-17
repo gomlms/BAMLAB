@@ -17,7 +17,7 @@ class SecondPoint extends Component {
       <p>
       M117 Two point layer <br />
       G1 X{Math.trunc(this.state.radius)}<br />
-      G1 Z{Math.trunc(-100 * (this.state.curLayer)/(this.state.numLayers + 1))}<br />
+      G1 Z{Math.trunc(- 20 -100 * (this.state.curLayer)/(this.state.numLayers + 1))}<br />
       G0 F4000<br />
       G1 E{this.state.amountDispursed}<br />
       M400<br />
@@ -26,9 +26,9 @@ class SecondPoint extends Component {
       G0 F4000<br />
       G1 E-25<br />
       G4 S5<br />
-      G1 Z{Math.trunc(100 * (this.state.curLayer)/(this.state.numLayers + 1))}<br />
+      G1 Z{Math.trunc(20 + 100 * (this.state.curLayer)/(this.state.numLayers + 1))}<br />
       G1 X{Math.trunc(-this.state.radius)}<br />
-      G1 Z{Math.trunc(-100 * (this.state.curLayer)/(this.state.numLayers + 1))}<br />
+      G1 Z{Math.trunc(-20 -100 * (this.state.curLayer)/(this.state.numLayers + 1))}<br />
       G0 F4000<br />
       G1 E{this.state.amountDispursed}<br />
       M400<br />
@@ -37,7 +37,7 @@ class SecondPoint extends Component {
       G0 F4000<br />
       G1 E-25<br />
       G4 S5<br />
-      G1 Z{Math.trunc(100 * (this.state.curLayer)/(this.state.numLayers + 1))}<br />
+      G1 Z{Math.trunc(20 + 100 * (this.state.curLayer)/(this.state.numLayers + 1))}<br />
       </p>
     );
   }
