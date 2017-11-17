@@ -3,6 +3,7 @@ import './Menu.css';
 import Slider from 'react-rangeslider';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import Layer from './Layer.js';
+import Buttons from './Buttons.js';
 
 class Menu extends Component {
 
@@ -11,16 +12,48 @@ class Menu extends Component {
 
     this.toggle = this.toggle.bind(this);
     this.handleChangeRadius = this.handleChangeRadius.bind(this);
+    this.buttonPressed = this.buttonPressed.bind(this);
+    this.handleAmountDispersed = this.handleAmountDispersed.bind(this);
 
     this.state = {
       patternDropdownOpen: false,
-      depthValue: '20',
       radius: 1,
-      numLayers: 1,
+      numLayers: 0,
       pointsLayer: 1,
       amountDispersed: 20,
+      curLayer: 0,
       layers: []
     };
+  }
+
+  buttonPressed(buttonNum) {
+    var numLayers = this.state.numLayers + 1;
+    var curLayer = this.state.curLayer + 1;
+    var layer;
+    var layers = [];
+
+    if(buttonNum == 1){
+      for(var i = 1; i < numLayers; i++){
+        layer = <Layer key={i} curLayer={numLayers*curLayer + i} numLayers={numLayers} pointsLayer={1} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
+        if(i >= 3){
+          layer = <Layer key={i} curLayer={numLayers*curLayer + i} numLayers={numLayers} pointsLayer={1} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
+        }
+        layers.push(layer);
+      }
+      layer = <Layer key={this.state.curLayer} curLayer={this.state.curLayer} numLayers={numLayers} pointsLayer={1} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
+    } else if(buttonNum == 2){
+      layer = <Layer key={this.state.curLayer} curLayer={this.state.curLayer} numLayers={this.state.numLayers} pointsLayer={2} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
+    } else if(buttonNum == 3){
+      layer = <Layer key={this.state.curLayer} curLayer={this.state.curLayer} numLayers={this.state.numLayers} pointsLayer={3} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
+    }
+
+    layers.push(layer);
+
+    this.setState({
+      curLayer: curLayer,
+      numLayers: numLayers,
+      layers: layers
+    });
   }
 
   toggle() {
@@ -33,25 +66,12 @@ class Menu extends Component {
     this.setState({radius: value});
   }
 
-  handleChangeLayers = (value) => {
-    this.setState({numLayers: value});
-  }
-
-  handleChangePoints = (value) => {
-    this.setState({pointsLayer: value});
-  }
-
-  handleAmountDispersed() {
-    this.state.layers[0].setState({numLayers: 5});
+  handleAmountDispersed = (value) => {
+    this.setState({amountDispersed: value});
   }
 
   render(){
     var layer;
-
-    for(var i = 0; i < this.state.numLayers; i+=1){
-      layer = <Layer key = {i} curLayer={i} numLayers={this.state.numLayers} pointsLayer={this.state.pointsLayer} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
-      this.state.layers.push(layer);
-    };
 
     return(
       <div className='site'>
@@ -61,40 +81,34 @@ class Menu extends Component {
           </div>
           <div>
             <Dropdown isOpen={this.state.patternDropdownOpen} toggle={this.toggle}>
-              <DropdownToggle caret>
-                Pattern
-              </DropdownToggle>
-              <DropdownMenu>
-                <DropdownItem header>Header</DropdownItem>
-                <DropdownItem divider />
-                <DropdownItem>Action</DropdownItem>
-                <DropdownItem>Another Action</DropdownItem>
-                <DropdownItem>Another Action</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
-          </div>
-          <div>
-            <form onSubmit={this.handleAmountDispersed}>
-              <label>
-                Amount Dispersed:
-                <input type="text" value={this.state.amountDispersed} onChange={this.handleAmountDispersed} />
-              </label>
-              <input type="submit" value="Change" />
-            </form>
-          </div>
-          <div>
-            <form onSubmit={this.handleChangeRadius}>
-              <label>
-                Radius:
-                <input type="text" value={this.state.radius} onChange={this.handleChangeRadius} />
-              </label>
-              <input type="submit" value="Submit" />
-            </form>
-          </div>
-        </div>
-        <div className='gcodeHolder'>
-          {this.state.layers}
-        </div>
+            <DropdownToggle caret>
+              Pattern
+            </DropdownToggle>
+            <DropdownMenu>
+      <DropdownItem header>Header</DropdownItem>
+      <DropdownItem divider />
+      <DropdownItem>Action</DropdownItem>
+      <DropdownItem>Another Action</DropdownItem>
+      <DropdownItem>Another Action</DropdownItem>
+      </DropdownMenu>
+      </Dropdown>
+      </div>
+      <div>
+      <Buttons buttonPressed={this.buttonPressed} />
+      </div>
+      <div>
+      <form onSubmit={this.handleAmountDispersed}>
+      <label>
+      Amount Dispersed:
+      <input type="text" value={this.state.amountDispersed} onChange={this.handleAmountDispersed} />
+      </label>
+      <input type="submit" value="Submit" />
+      </form>
+      </div>
+      </div>
+      <div className='gcodeHolder'>
+      {this.state.layers}
+      </div>
       </div>
     );
   }

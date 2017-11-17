@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import FirstPoint from './FirstPoint.js';
 import SecondPoint from './SecondPoint.js';
+import ThirdPoint from './ThirdPoint.js';
 
 class Layer extends Component {
   constructor(props, context) {
@@ -18,11 +19,12 @@ class Layer extends Component {
   render(){
     let point = [];
     var i = 0;
-    console.log(this.state.pointsLayer + "COOL");
     if(this.state.pointsLayer == 1){
-      point.push(<FirstPoint key={this.state.curLayer} numLayers={this.state.numLayers} radius={this.state.radius} curLayer={this.state.curLayer} amountDispersed={this.state.amountDispersed}/>);
+      point.push(<FirstPoint key={this.props.curLayer} numLayers={this.props.numLayers} radius={this.props.radius} curLayer={this.props.curLayer} amountDispersed={this.props.amountDispersed}/>);
     } else if(this.state.pointsLayer == 2){
-      point.push(<SecondPoint key={this.state.curLayer} numLayers={this.state.numLayers} radius={this.state.radius} curLayer={this.state.curLayer} amountDispersed={this.state.amountDispersed}/>);
+      point.push(<SecondPoint key={this.props.curLayer} numLayers={this.props.numLayers} radius={this.props.radius} curLayer={this.props.curLayer} amountDispersed={this.props.amountDispersed}/>);
+    } else if(this.state.pointsLayer == 3){
+      point.push(<ThirdPoint key={this.props.curLayer} numLayers={this.props.numLayers} radius={this.props.radius} curLayer={this.props.curLayer} amountDispersed={this.props.amountDispersed}/>);
     }
 
     return(
