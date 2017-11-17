@@ -5,6 +5,7 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap
 import Layer from './Layer.js';
 
 class Menu extends Component {
+
   constructor(props, context) {
     super(props, context);
 
@@ -17,7 +18,8 @@ class Menu extends Component {
       radius: 1,
       numLayers: 1,
       pointsLayer: 1,
-      amountDispersed: 20
+      amountDispersed: 20,
+      layers: []
     };
   }
 
@@ -39,17 +41,16 @@ class Menu extends Component {
     this.setState({pointsLayer: value});
   }
 
-  handleAmountDispersed = (value) => {
-    this.setState({amountDispersed: value});
+  handleAmountDispersed() {
+    this.state.layers[0].setState({numLayers: 5});
   }
 
   render(){
-    const children = [];
     var layer;
-    
+
     for(var i = 0; i < this.state.numLayers; i+=1){
       layer = <Layer key = {i} curLayer={i} numLayers={this.state.numLayers} pointsLayer={this.state.pointsLayer} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
-      children.push(layer);
+      this.state.layers.push(layer);
     };
 
     return(
@@ -73,34 +74,12 @@ class Menu extends Component {
             </Dropdown>
           </div>
           <div>
-            <h3>Number of Layers</h3>
-            <Slider
-              value={this.state.numLayers}
-              orientation="horizontal"
-              onChange={this.handleChangeLayers}
-              min = {1}
-              step = {1}
-              max = {5}
-            />
-          </div>
-          <div>
-            <h3>Points per Layer</h3>
-            <Slider
-              value={this.state.pointsLayer}
-              orientation="horizontal"
-              onChange={this.handleChangePoints}
-              min = {1}
-              step = {1}
-              max = {3}
-            />
-          </div>
-          <div>
             <form onSubmit={this.handleAmountDispersed}>
               <label>
                 Amount Dispersed:
                 <input type="text" value={this.state.amountDispersed} onChange={this.handleAmountDispersed} />
               </label>
-              <input type="submit" value="Submit" />
+              <input type="submit" value="Change" />
             </form>
           </div>
           <div>
@@ -114,30 +93,7 @@ class Menu extends Component {
           </div>
         </div>
         <div className='gcodeHolder'>
-          <p>
-            M118 Cold Extrusion
-            M302 S0
-            G90
-            M117 Calibration
-            G0 Z45 F6000
-            M117 Homing X and Y
-            G28 X Y
-            M117 Homing Z
-            G0 X45 Y100
-            G28 Z
-            G90
-            M117 Centering Needle Over Beaker
-            G0 Z45
-            G0 X137.50 Y67.50 (Center of plate)
-            G90
-            M117 Centering over Beaker
-            G0 Z45 ; Raise to just above Beaker Rim
-            G0 X137.50 Y67.
-            M117 Switch to Relative Coordinates
-            G91; Relative Coordiantes
-
-          </p>
-          {children}
+          {this.state.layers}
         </div>
       </div>
     );
