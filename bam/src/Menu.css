@@ -1,6 +1,7 @@
 
 .leftSide {
   float: left;
+  height: 97vh;
   margin-left: 10px;
   text-align: left;
   display: inline-block;
@@ -33,7 +34,7 @@
 .gcodeHolder {
   overflow-y: auto;
   height: 97vh;
-  background-image: url("BAM-Tilt2.png");
+  background-color: lightblue;
   border-style: double;
   text-align: right;
 }
