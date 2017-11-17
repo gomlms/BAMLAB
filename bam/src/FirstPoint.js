@@ -13,6 +13,7 @@ class FirstPoint extends Component {
   }
 
   render(){
+    console.log(this.props.curLayer);
     return(
       <p>
       M117 Single point layer<br />
