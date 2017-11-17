@@ -18,7 +18,7 @@ class FirstPoint extends Component {
       <p>
       M117 Single point layer<br />
       G1 Z{-1 * Math.trunc(20 + 100 * (this.props.curLayer)/(this.props.numLayers + 1))}<br />
-      G0 F4000<br />3
+      G0 F4000<br />
       G1 E{this.props.amountDispersed}<br />
       G1 Z{-1 * Math.trunc(20 * (this.state.curLayer)/(this.state.numLayers + 1))}<br />
       G0 F4000<br />
