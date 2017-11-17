@@ -15,6 +15,7 @@ class Menu extends Component {
     this.buttonPressed = this.buttonPressed.bind(this);
     this.handleAmountDispersed = this.handleAmountDispersed.bind(this);
     this.getGCode = this.getGCode.bind(this);
+    this.clear = this.clear.bind(this);
 
     this.state = {
       patternDropdownOpen: false,
@@ -83,8 +84,24 @@ class Menu extends Component {
     this.setState({amountDispersed: value});
   }
 
-  getGCode(){
+  clear(){
+     this.setState({
+      patternDropdownOpen: false,
+      radius: 1,
+      numLayers: 0,
+      pointsLayer: 1,
+      amountDispersed: 20,
+      curLayer: 0,
+      layers: [],
+      pointsPerLayer: [],
+      id: 0,
+    });
+  }
 
+  getGCode(){
+    for(var i = 0; i < this.state.numLayers; i++){
+
+    }
   }
 
   render(){
@@ -108,6 +125,7 @@ class Menu extends Component {
       <input type="submit" value="Submit" />
       </form>
       <input type="button" value="Download G-Code" onClick={this.getGCode} />
+      <input type="button" value="Reset" onClick={this.clear} />
       </div>
       </div>
       <div className='gcodeHolder'>
