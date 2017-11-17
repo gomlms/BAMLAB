@@ -14,6 +14,7 @@ class SecondPoint extends Component {
 
   render(){
     return(
+      <div>
       <p>
       M117 Two point layer <br />
       G1 X{Math.trunc(this.state.radius)}<br />
@@ -39,6 +40,7 @@ class SecondPoint extends Component {
       G4 S5<br />
       G1 Z{Math.trunc(100 * (this.state.curLayer)/(this.state.numLayers + 1))}<br />
       </p>
+      </div>
     );
   }
 }

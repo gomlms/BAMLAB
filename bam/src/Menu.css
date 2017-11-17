@@ -4,12 +4,14 @@
   margin-left: 10px;
   text-align: left;
   display: inline-block;
+  background-color: lightblue;
 }
 
 .site {
   display: inline-block;
   float: left;
   width: 100%;
+  background-color: lightblue;
 }
 
 .slider {
@@ -31,4 +33,7 @@
 .gcodeHolder {
   overflow-y: auto;
   height: 97vh;
+  background-image: url("BAM-Tilt2.png");
+  border-style: double;
+  text-align: right;
 }
