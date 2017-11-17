@@ -6,6 +6,8 @@
   text-align: left;
   display: inline-block;
   background-color: lightblue;
+  background-image: url("sochol-web.jpg");
+  background-size: contain;
 }
 
 .site {
@@ -36,5 +38,7 @@
   height: 97vh;
   background-color: lightblue;
   border-style: double;
-  text-align: left;
+  text-align: right;
+  background-image: url("bam.jpg");
+  background-size: contain;
 }
