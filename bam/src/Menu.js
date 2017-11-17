@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import ReactDOM from 'react-dom';
 import './Menu.css';
 import Slider from 'react-rangeslider';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
@@ -11,11 +12,11 @@ class Menu extends Component {
     super(props, context);
 
     this.toggle = this.toggle.bind(this);
-    this.handleChangeRadius = this.handleChangeRadius.bind(this);
     this.buttonPressed = this.buttonPressed.bind(this);
     this.handleAmountDispersed = this.handleAmountDispersed.bind(this);
     this.getGCode = this.getGCode.bind(this);
     this.clear = this.clear.bind(this);
+    this.buttonAmountDispersed = this.buttonAmountDispersed.bind(this);
 
     this.state = {
       patternDropdownOpen: false,
@@ -59,8 +60,6 @@ class Menu extends Component {
 
     layers.push(layer);
 
-    console.log(tempPoints);
-
     this.setState({
       curLayer: curLayer,
       numLayers: numLayers,
@@ -76,12 +75,30 @@ class Menu extends Component {
     });
   }
 
-  handleChangeRadius = (value) => {
-    this.setState({radius: value});
+  buttonAmountDispersed(event) {
+    var id = 0;
+    var numLayers = this.state.numLayers;
+    var layer;
+    var tempPoints = this.state.pointsPerLayer;
+    var layers = [];
+    this.setState({amountDispersed: this.state.amountDispersed});
+
+    console.log(tempPoints);
+
+    if(tempPoints.length > 0){
+      for(var i = 0; i < numLayers; i++){
+        layer = <Layer key={id++} curLayer={i} numLayers={numLayers} pointsLayer={tempPoints[i]} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
+        layers.push(layer);
+      }
+    }
+
+    this.setState({
+      layers: layers,
+    });
   }
 
-  handleAmountDispersed = (value) => {
-    this.setState({amountDispersed: value});
+  handleAmountDispersed(event){
+    this.setState({amountDispersed: event.target.value});
   }
 
   clear(){
@@ -99,9 +116,7 @@ class Menu extends Component {
   }
 
   getGCode(){
-    for(var i = 0; i < this.state.numLayers; i++){
-
-    }
+    
   }
 
   render(){
@@ -113,25 +128,27 @@ class Menu extends Component {
           <div className='title'>
             <h1>Bam Lab G-Code Generator</h1>
           </div>
-      <div>
-      <Buttons buttonPressed={this.buttonPressed} />
-      </div>
-      <div>
-      <form onSubmit={this.handleAmountDispersed}>
-      <label>
-      Amount Dispersed:
-      <input type="text" value={this.state.amountDispersed} onChange={this.handleAmountDispersed} />
-      </label>
-      <input type="submit" value="Submit" />
-      </form>
-      <input type="button" value="Download G-Code" onClick={this.getGCode} />
-      <input type="button" value="Reset" onClick={this.clear} />
-      </div>
+        <div>
+          <Buttons buttonPressed={this.buttonPressed} />
+        </div>
+        <div>
+          <div>
+           <form onSubmit={this.handleAmountDispersed}>
+             <label>
+               Amount Dispersed:
+               <input type="text" value={this.state.amountDispersed} onChange={this.handleAmountDispersed}/>
+             </label>
+             <input type="button" value="Change" onClick={this.buttonAmountDispersed} />
+           </form>
+         </div>
+          <input type="button" value="Download G-Code" onClick={this.getGCode} />
+          <input type="button" value="Reset" onClick={this.clear} />
+        </div>
       </div>
       <div className='gcodeHolder'>
-      {this.state.layers}
+        {this.state.layers}
       </div>
-      </div>
+    </div>
     );
   }
 }
