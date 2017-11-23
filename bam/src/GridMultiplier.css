@@ -1,0 +1,13 @@
+.columnMult {
+  display: inline-block;
+  margin-left: 20px;
+  margin-top: -20px;
+}
+
+.rowMult {
+  margin-bottom: 10px;
+}
+
+.textBox {
+  width: 20px;
+}

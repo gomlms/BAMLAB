@@ -2,37 +2,49 @@ import React, {Component} from 'react';
 
 class Buttons extends Component {
   constructor(props, context) {
+    var buttonText = [];
+
     super(props, context);
 
-    this.function1 = this.function1.bind(this);
-    this.function2 = this.function2.bind(this);
-    this.function3 = this.function3.bind(this);
+    this.buttonPressed = this.buttonPressed.bind(this);
+
+    buttonText = ["OFF","OFF","OFF","OFF","OFF","OFF","OFF","OFF","OFF"]
 
     this.state = {
       buttonPressed: props.buttonPressed,
+      buttonText: buttonText,
     }
   }
 
-  function1() {
-    this.props.buttonPressed(1);
-  }
+  buttonPressed(index){
+    var buttonState = this.state.buttonText;
 
-  function2() {
-    this.props.buttonPressed(2);
-  }
+    if(buttonState[index] === "OFF"){
+      buttonState[index] = "ON";
+    } else {
+      buttonState[index] = "OFF";
+    }
 
-  function3() {
-    this.props.buttonPressed(3);
+    this.setState({buttonState: buttonState});
+    this.props.buttonPressed(index+1);
   }
 
   render() {
     return(
       <div>
-        <input type="button" value="One" onClick={this.function1} />
+        <input type="button" value={this.state.buttonText[0]} onClick={() => this.buttonPressed(0)} />
+        <input type="button" value={this.state.buttonText[1]} onClick={() => this.buttonPressed(1)} />
+        <input type="button" value={this.state.buttonText[2]} onClick={() => this.buttonPressed(2)} />
 
-        <input type="button" value="Two" onClick={this.function2} />
+        <br />
+        <input type="button" value={this.state.buttonText[3]} onClick={() => this.buttonPressed(3)} />
+        <input type="button" value={this.state.buttonText[4]} onClick={() => this.buttonPressed(4)} />
+        <input type="button" value={this.state.buttonText[5]} onClick={() => this.buttonPressed(5)} />
 
-        <input type="button" value="Three" onClick={this.function3} />
+        <br />
+        <input type="button" value={this.state.buttonText[6]} onClick={() => this.buttonPressed(6)} />
+        <input type="button" value={this.state.buttonText[7]} onClick={() => this.buttonPressed(7)} />
+        <input type="button" value={this.state.buttonText[8]} onClick={() => this.buttonPressed(8)} />
       </div>
     );
   }

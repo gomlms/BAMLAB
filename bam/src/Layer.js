@@ -18,12 +18,12 @@ class Layer extends Component {
 
   render(){
     let point = [];
-    var i = 0;
-    if(this.state.pointsLayer == 1){
+  
+    if(this.state.pointsLayer === 1){
       point.push(<FirstPoint key={this.props.curLayer} numLayers={this.props.numLayers} radius={this.props.radius} curLayer={this.props.curLayer} amountDispersed={this.props.amountDispersed}/>);
-    } else if(this.state.pointsLayer == 2){
+    } else if(this.state.pointsLayer === 2){
       point.push(<SecondPoint key={this.props.curLayer} numLayers={this.props.numLayers} radius={this.props.radius} curLayer={this.props.curLayer} amountDispersed={this.props.amountDispersed}/>);
-    } else if(this.state.pointsLayer == 3){
+    } else if(this.state.pointsLayer === 3){
       point.push(<ThirdPoint key={this.props.curLayer} numLayers={this.props.numLayers} radius={this.props.radius} curLayer={this.props.curLayer} amountDispersed={this.props.amountDispersed}/>);
     }
 

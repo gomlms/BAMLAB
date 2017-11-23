@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
 import './Menu.css';
-import Slider from 'react-rangeslider';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import Layer from './Layer.js';
 import Buttons from './Buttons.js';
+import Grid from './GridMultiplier';
 
 class Menu extends Component {
 
@@ -13,10 +12,10 @@ class Menu extends Component {
 
     this.toggle = this.toggle.bind(this);
     this.buttonPressed = this.buttonPressed.bind(this);
-    this.handleAmountDispersed = this.handleAmountDispersed.bind(this);
+    this.handleNumLayers = this.handleNumLayers.bind(this);
     this.getGCode = this.getGCode.bind(this);
     this.clear = this.clear.bind(this);
-    this.buttonAmountDispersed = this.buttonAmountDispersed.bind(this);
+    this.buttonNumLayers = this.buttonNumLayers.bind(this);
 
     this.state = {
       patternDropdownOpen: false,
@@ -28,7 +27,15 @@ class Menu extends Component {
       layers: [],
       pointsPerLayer: [],
       id: 0,
+      volumeSolids: 0,
+      rowVals: [],
+      colVals: [],
+      matrix: []
     };
+  }
+
+  handleVolumeSolids(event){
+    this.setState({volumeSolids: event.target.value});
   }
 
   buttonPressed(buttonNum) {
@@ -44,15 +51,15 @@ class Menu extends Component {
       layers.push(layer);
     }
 
-    if(buttonNum == 1){
+    if(buttonNum === 1){
       tempPoints.push(1);
 
       layer = <Layer key={id++} curLayer={numLayers} numLayers={numLayers} pointsLayer={1} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
-    } else if(buttonNum == 2){
+    } else if(buttonNum === 2){
       tempPoints.push(2);
 
       layer = <Layer key={id++} curLayer={curLayer} numLayers={this.state.numLayers} pointsLayer={2} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
-    } else if(buttonNum == 3){
+    } else if(buttonNum === 3){
       tempPoints.push(3);
 
       layer = <Layer key={id++} curLayer={curLayer} numLayers={this.state.numLayers} pointsLayer={3} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
@@ -75,30 +82,35 @@ class Menu extends Component {
     });
   }
 
-  buttonAmountDispersed(event) {
-    var id = 0;
-    var numLayers = this.state.numLayers;
-    var layer;
-    var tempPoints = this.state.pointsPerLayer;
-    var layers = [];
-    this.setState({amountDispersed: this.state.amountDispersed});
+  buttonVolumeSolids(event){
+    this.setState({volumeSolids: this.state.volumeSolids});
+  }
 
-    console.log(tempPoints);
+  buttonNumLayers(event) {
+    this.setState({numLayers: this.state.numLayers});
+  }
 
-    if(tempPoints.length > 0){
-      for(var i = 0; i < numLayers; i++){
-        layer = <Layer key={id++} curLayer={i} numLayers={numLayers} pointsLayer={tempPoints[i]} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
-        layers.push(layer);
+  handleNumLayers(event){
+    var rowVals = this.state.rowVals;
+    var colVals = this.state.colVals;
+
+    if(rowVals = []){
+      for(var i = 0; i < event.target.value; i++){
+        rowVals.push(1);
       }
     }
 
-    this.setState({
-      layers: layers,
-    });
-  }
+    if(colVals = []){
+      colVals.push(1);
+      colVals.push(1);
+      colVals.push(1);
+    }
 
-  handleAmountDispersed(event){
-    this.setState({amountDispersed: event.target.value});
+    this.setState({
+      numLayers: event.target.value,
+      rowVals: rowVals,
+      colVals: colVals
+    });
   }
 
   clear(){
@@ -112,16 +124,40 @@ class Menu extends Component {
       layers: [],
       pointsPerLayer: [],
       id: 0,
+      rowVals: [],
+      colVals: [],
+      matrix: []
     });
   }
 
   getGCode(){
-    
+    let matrix = [];
+
+    for(var i = 0; i < this.state.numLayers; i++){
+      matrix[i] = [];
+      for(var j = 0; j < 3; j++){
+        matrix[i][j] = (this.state.rowVals[i]) * (this.state.colVals[j]);
+      }
+    }
+
+    this.setState({
+      matrix: matrix
+    })
+  }
+
+  callBackRows = (rows) => {
+    this.setState({
+      rowVals: rows
+    })
+  }
+
+  callBackCols = (cols) => {
+    this.setState({
+      colVals: cols
+    })
   }
 
   render(){
-    var layer;
-
     return(
       <div className='site'>
         <div className='leftSide'>
@@ -129,20 +165,35 @@ class Menu extends Component {
             <h1>BLG - Bam Lab G-Code Generator</h1>
           </div>
         <div>
+        <form onSubmit={this.handleVolumeSolids}>
+          <label>
+            Volume of Solids:
+            <input type="text" value={this.state.volumeSolids} onChange={this.handleVolumeSolids}/>
+          </label>
+          <input type="button" value="Change" onClick={this.buttonAmountDispersed} />
+        </form>
+        </div>
+        <div>
           <Buttons buttonPressed={this.buttonPressed} />
         </div>
         <div>
           <div>
-           <form onSubmit={this.handleAmountDispersed}>
+           <form onSubmit={this.handleNumLayers}>
              <label>
-               Amount Dispersed:
-               <input type="text" value={this.state.amountDispersed} onChange={this.handleAmountDispersed}/>
+               Number Of Layers:
+               <input type="text" value={this.state.numLayers} onChange={this.handleNumLayers}/>
              </label>
-             <input type="button" value="Change" onClick={this.buttonAmountDispersed} />
+             <input type="button" value="Change" onClick={this.buttonNumLayers} />
            </form>
-         </div>
-          <input type="button" value="Download G-Code" onClick={this.getGCode} />
+        </div>
+        <div>
+          <Grid callBackRows={this.callBackRows} callBackCols={this.callBackCols} numRows={this.state.numLayers}/>
+        </div>
+        <div>
+          <input type="button" value="Generate" onClick={this.getGCode} />
+          <br />
           <input type="button" value="Reset" onClick={this.clear} />
+          </div>
         </div>
       </div>
       <div className='gcodeHolder'>
