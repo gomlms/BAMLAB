@@ -254,7 +254,7 @@ class Menu extends Component {
           <div className='title'>
             <h1>BLG - Bam Lab G-Code Generator</h1>
           </div>
-        <div>
+        <div className='volume'>
         <form onSubmit={this.handleVolumeSolids}>
           <label>
             Volume of Solids:
@@ -263,10 +263,10 @@ class Menu extends Component {
           <input type="button" value="Change" onClick={this.buttonAmountDispersed} />
         </form>
         </div>
-        <div>
+        <div className='buttons'>
           <Buttons buttonPressed={this.buttonPressed} />
         </div>
-        <div>
+        <div className='layers'>
           <div>
            <form onSubmit={this.handleNumLayers}>
              <label>
@@ -276,10 +276,10 @@ class Menu extends Component {
              <input type="button" value="Change" onClick={this.buttonNumLayers} />
            </form>
         </div>
-        <div>
+        <div className='displayOfSelection'>
           <Grid callBackRows={this.callBackRows} callBackCols={this.callBackCols} numRows={this.state.numLayers}/>
         </div>
-        <div>
+        <div className='genAndReset'>
           <input type="button" value="Generate" onClick={this.getGCode} />
           <br />
           <input type="button" value="Reset" onClick={this.clear} />

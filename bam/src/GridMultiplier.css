@@ -10,4 +10,6 @@
 
 .textBox {
   width: 20px;
+  border: 2px solid;
+  border-radius: 25px;
 }

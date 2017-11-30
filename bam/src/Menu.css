@@ -5,9 +5,10 @@
   padding-left: 15px;
   text-align: left;
   display: inline-block;
+  background: no-repeat center;
   background-color: lightblue;
   background-image: url("sochol-web.jpg");
-  background-size: cover;
+  background-size: contain;
   width: 50%;
   border-style: double;
   border-right: 5px solid black;
@@ -16,6 +17,7 @@
 .title {
   border: outset;
   border-width: medium;
+  background-color: lightblue;
   font-style: italic;
   text-decoration-color: blue;
 }
