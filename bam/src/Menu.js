@@ -30,7 +30,10 @@ class Menu extends Component {
       volumeSolids: 0,
       rowVals: [],
       colVals: [],
-      matrix: []
+      matrix: [],
+      enabledButtons: [0,0,0,0,0,0,0,0,0],
+      strings: [],
+      startText: ""
     };
   }
 
@@ -39,41 +42,17 @@ class Menu extends Component {
   }
 
   buttonPressed(buttonNum) {
-    var numLayers = this.state.numLayers + 1;
-    var curLayer = this.state.curLayer + 1;
-    var layer;
-    var layers = [];
-    var tempPoints = this.state.pointsPerLayer;
-    var id = this.state.id;
+    var buttons = this.state.enabledButtons;
 
-    for(var i = 0; i < numLayers - 1; i++){
-      layer = <Layer key={id++} curLayer={i} numLayers={numLayers} pointsLayer={tempPoints[i]} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
-      layers.push(layer);
+    if(buttons[buttonNum] == 0){
+      buttons[buttonNum] = 1;
+    } else {
+      buttons[buttonNum] = 0;
     }
-
-    if(buttonNum === 1){
-      tempPoints.push(1);
-
-      layer = <Layer key={id++} curLayer={numLayers} numLayers={numLayers} pointsLayer={1} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
-    } else if(buttonNum === 2){
-      tempPoints.push(2);
-
-      layer = <Layer key={id++} curLayer={curLayer} numLayers={this.state.numLayers} pointsLayer={2} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
-    } else if(buttonNum === 3){
-      tempPoints.push(3);
-
-      layer = <Layer key={id++} curLayer={curLayer} numLayers={this.state.numLayers} pointsLayer={3} amountDispersed={this.state.amountDispersed} radius={this.state.radius} />
-    }
-
-    layers.push(layer);
 
     this.setState({
-      curLayer: curLayer,
-      numLayers: numLayers,
-      layers: layers,
-      pointsPerLayer: tempPoints,
-      id: id
-    });
+      enabledButtons: buttons
+    })
   }
 
   toggle() {
@@ -126,12 +105,17 @@ class Menu extends Component {
       id: 0,
       rowVals: [],
       colVals: [],
-      matrix: []
+      matrix: [],
+      strings: [],
+      startText: ""
     });
   }
 
   getGCode(){
     let matrix = [];
+    var strings = [];
+
+    var buttons = this.state.enabledButtons;
 
     for(var i = 0; i < this.state.numLayers; i++){
       matrix[i] = [];
@@ -140,9 +124,115 @@ class Menu extends Component {
       }
     }
 
+    for(var i = 0; i < 9; i++){
+      strings.push([]);
+    }
+
     this.setState({
-      matrix: matrix
+      matrix: matrix,
+      startText: <p>
+                M118 Cold Extrusion <br />
+                M302 S0 <br />
+                G90 <br />
+                M117 Calibration <br />
+                G0 Z45 F6000 <br />
+                M117 Homing X and Y <br />
+                G28 X Y <br />
+                M117 Homing Z <br />
+                G0 X45 Y100 <br />
+                G28 Z <br />
+                G90 <br />
+                M117 Centering Needle Over Beaker <br />
+                G0 Z45 <br />
+                G0 X137.50 Y67.50 (Center of plate) <br />
+                G90 <br />
+                M117 Centering over Beaker <br />
+                G0 Z45 ; Raise to just above Beaker Rim <br />
+                G0 X137.50 Y67. <br />
+                M117 Switch to Relative Coordinates <br />
+                G91; Relative Coordiantes <br />
+              </p>
     })
+
+    //THIS CODE IS JUST CAUSE OF THIS PATTERN BUT IT CAN Change
+    strings.push([]);
+    strings.push(["G1 X15"]);
+    strings.push(<br />);
+    strings.push(["G1 Y15"]);
+    strings.push(<br />);
+    strings.push(["G1 X-15"]);
+    strings.push(<br />);
+    strings.push(["G1 X-15"]);
+    strings.push(<br />);
+    strings.push(["G1 Y-15"]);
+    strings.push(<br />);
+    strings.push(["G1 Y-15"]);
+    strings.push(<br />);
+    strings.push(["G1 X15"]);
+    strings.push(<br />);
+    strings.push(["G1 X15"]);
+    strings.push(<br />);
+
+    var initialDown = -Math.trunc((parseInt(this.state.numLayers) * 80 / (parseInt(this.state.numLayers) + 1)) + 50);
+    var intervalUp = Math.trunc((80 / (parseInt(this.state.numLayers) + 1)));
+
+    if(this.state.numLayers === 1){
+      intervalUp = 0;
+    }
+
+    if(this.state.numLayers === 0){
+      intervalUp = 90;
+    }
+
+    for(var j = 0; j < 9; j++){
+      if(buttons[j] === 1){
+        strings[j].push("G1 Z" + initialDown);
+        strings[j].push(<br />);
+        strings[j].push("G0 F4000");
+        strings[j].push(<br />);
+        strings[j].push("G1 E50");
+        strings[j].push(<br />);
+        strings[j].push("M400");
+        strings[j].push(<br />);
+        strings[j].push("G4 S15");
+        strings[j].push(<br />);
+        strings[j].push("M400");
+        strings[j].push(<br />);
+        strings[j].push("G0 F4000");
+        strings[j].push(<br />);
+        strings[j].push("G1 E-25");
+        strings[j].push(<br />);
+        strings[j].push("G4 S5");
+        strings[j].push(<br />);
+
+        for(var i = 0; i < this.state.numLayers - 1; i++){
+          strings[j].push("G1 Z" + intervalUp);
+          strings[j].push(<br />);
+          strings[j].push("G0 F4000");
+          strings[j].push(<br />);
+          strings[j].push("G1 E50");
+          strings[j].push(<br />);
+          strings[j].push("M400");
+          strings[j].push(<br />);
+          strings[j].push("G4 S15");
+          strings[j].push(<br />);
+          strings[j].push("M400");
+          strings[j].push(<br />);
+          strings[j].push("G0 F4000");
+          strings[j].push(<br />);
+          strings[j].push("G1 E-25");
+          strings[j].push(<br />);
+          strings[j].push("G4 S5");
+          strings[j].push(<br />);
+        }
+        strings[j].push("G1 Z" + (intervalUp + 50));
+        strings[j].push(<br />);
+      }
+    }
+
+    this.setState({
+      strings: strings
+    });
   }
 
   callBackRows = (rows) => {
@@ -197,7 +287,19 @@ class Menu extends Component {
         </div>
       </div>
       <div className='gcodeHolder'>
-        {this.state.layers}
+        {this.state.startText}
+        {/*CHANGE THE ORDER OF THE STRINGS BELOW DEPENDING ON THE PATTERN */}
+        <p>
+          {this.state.strings[4]}
+          {this.state.strings[5]}
+          {this.state.strings[2]}
+          {this.state.strings[1]}
+          {this.state.strings[0]}
+          {this.state.strings[3]}
+          {this.state.strings[6]}
+          {this.state.strings[7]}
+          {this.state.strings[8]}
+        </p>
       </div>
     </div>
     );

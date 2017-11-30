@@ -25,8 +25,7 @@ class Buttons extends Component {
       buttonState[index] = "OFF";
     }
 
-    this.setState({buttonState: buttonState});
-    this.props.buttonPressed(index+1);
+    this.props.buttonPressed(index);
   }
 
   render() {
