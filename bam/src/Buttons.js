@@ -30,7 +30,8 @@ class Buttons extends Component {
 
   render() {
     return(
-      <div>
+      <div className='buttonsOneToNine'>
+
         <input type="button" value={this.state.buttonText[0]} onClick={() => this.buttonPressed(0)} />
         <input type="button" value={this.state.buttonText[1]} onClick={() => this.buttonPressed(1)} />
         <input type="button" value={this.state.buttonText[2]} onClick={() => this.buttonPressed(2)} />

@@ -301,19 +301,26 @@ class Menu extends Component {
           <input type="button" value="Change" onClick={this.buttonAmountDispersed} />
         </form>
         </div>
-        <div className='buttons'>
-          <Buttons buttonPressed={this.buttonPressed} />
-        </div>
+
         <div className='layers'>
           <div>
            <form onSubmit={this.handleNumLayers}>
              <label>
                Number Of Layers:
-               <input type="text" value={this.state.numLayers} onChange={this.handleNumLayers}/>
+               <input type="text" placeholder="Select a Number from 1-5" value={this.state.numLayers} onChange={this.handleNumLayers}/>
              </label>
              <input type="button" value="Change" onClick={this.buttonNumLayers} />
            </form>
+          </div>
         </div>
+
+        <div className='leftBottom'>
+        <div className='buttonsPlacer'>
+          <div className='buttons'>
+            <Buttons buttonPressed={this.buttonPressed} />
+          </div>
+        </div>
+
         <div className='displayOfSelection'>
           <Grid callBackRows={this.callBackRows} callBackCols={this.callBackCols} numRows={this.state.numLayers}/>
         </div>
@@ -321,7 +328,7 @@ class Menu extends Component {
           <input type="button" value="Generate" onClick={this.getGCode} />
           <br />
           <input type="button" value="Reset" onClick={this.clear} />
-          </div>
+        </div>
         </div>
       </div>
       <div className='gcodeHolder'>
