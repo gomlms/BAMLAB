@@ -51,7 +51,7 @@ class GridMultiplier extends Component {
       grid.push([]);
       this.state.rowVal.push(1);
       grid[i].push(
-        <form key={i} className='rowMult'>
+        <form key={i} className='rowMult' onSubmit={this.handleRowChange}>
           <input type="text" key={i} value={this.state.rowVal[i]} className='textBox' onChange={this.handleRowChange} />
         </form>
       );

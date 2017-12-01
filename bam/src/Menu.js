@@ -16,6 +16,7 @@ class Menu extends Component {
     this.getGCode = this.getGCode.bind(this);
     this.clear = this.clear.bind(this);
     this.buttonNumLayers = this.buttonNumLayers.bind(this);
+    this.handleVolumeSolids = this.handleVolumeSolids.bind(this);
 
     this.state = {
       patternDropdownOpen: false,
@@ -114,19 +115,62 @@ class Menu extends Component {
   getGCode(){
     let matrix = [];
     var strings = [];
+    var defaultExtrude = 0;
+    var percentOfMaterial = 0.1;
+    var matrixTotal = 0;
+    var leftFlag = false, middleFlag = false, rightFlag = false;
 
     var buttons = this.state.enabledButtons;
 
+    if(this.state.numLayers === 0){
+      this.clear();
+      console.log("Number of Layers cannot be 0");
+      return;
+    }
+
     for(var i = 0; i < this.state.numLayers; i++){
-      matrix[i] = [];
       for(var j = 0; j < 3; j++){
-        matrix[i][j] = (this.state.rowVals[i]) * (this.state.colVals[j]);
+        matrix.push((parseInt(this.state.rowVals[i])) * parseInt((this.state.colVals[j])));
       }
     }
 
     for(var i = 0; i < 9; i++){
-      strings.push([]);
+      if(buttons[i] === 1){
+        if(i === 0 || i === 3 || i === 6){
+          if(!leftFlag){
+            for(var j = 0; j < matrix.length; j++){
+              if(j % 3 === 0){
+                matrixTotal += matrix[j];
+              }
+            }
+            leftFlag = true;
+          }
+        } else if(i === 1 || i === 4 || i === 7){
+          if(!middleFlag){
+            for(var j = 0; j < matrix.length; j++){
+              if(j % 3 === 1){
+                matrixTotal += matrix[j];
+              }
+            }
+            middleFlag = true;
+          }
+        } else if(i === 2 || i === 5 || i === 8){
+          if(!rightFlag){
+            for(var j = 0; j < matrix.length; j++){
+              if(j % 3 === 2){
+                matrixTotal += matrix[j];
+              }
+            }
+            rightFlag = true;
+          }
+        }
+      }
     }
+
+    console.log(matrixTotal);
+
+    defaultExtrude = (parseInt(this.state.volumeSolids) * percentOfMaterial / (matrixTotal))
+
 
     this.setState({
       matrix: matrix,
@@ -155,23 +199,19 @@ class Menu extends Component {
     })
 
     //THIS CODE IS JUST CAUSE OF THIS PATTERN BUT IT CAN Change
+    strings.push(["G1 X-15"]);
+    strings.push(["G1 X-15"]);
+    strings.push(["G1 Y15"]);
+    strings.push(["G1 Y-15"]);
     strings.push([]);
     strings.push(["G1 X15"]);
-    strings.push(<br />);
-    strings.push(["G1 Y15"]);
-    strings.push(<br />);
-    strings.push(["G1 X-15"]);
-    strings.push(<br />);
-    strings.push(["G1 X-15"]);
-    strings.push(<br />);
     strings.push(["G1 Y-15"]);
-    strings.push(<br />);
-    strings.push(["G1 Y-15"]);
-    strings.push(<br />);
     strings.push(["G1 X15"]);
-    strings.push(<br />);
     strings.push(["G1 X15"]);
-    strings.push(<br />);
+
+    for(var i = 0; i < 9; i++){
+      strings[i].push(<br />);
+    }
 
     var initialDown = -Math.trunc((parseInt(this.state.numLayers) * 80 / (parseInt(this.state.numLayers) + 1)) + 50);
     var intervalUp = Math.trunc((80 / (parseInt(this.state.numLayers) + 1)));
@@ -180,17 +220,13 @@ class Menu extends Component {
       intervalUp = 0;
     }
 
-    if(this.state.numLayers === 0){
-      intervalUp = 90;
-    }
-
     for(var j = 0; j < 9; j++){
       if(buttons[j] === 1){
         strings[j].push("G1 Z" + initialDown);
         strings[j].push(<br />);
         strings[j].push("G0 F4000");
         strings[j].push(<br />);
-        strings[j].push("G1 E50");
+        strings[j].push("G1 E" + (defaultExtrude * matrix[j]).toFixed(2));
         strings[j].push(<br />);
         strings[j].push("M400");
         strings[j].push(<br />);
@@ -206,11 +242,12 @@ class Menu extends Component {
         strings[j].push(<br />);
 
         for(var i = 0; i < this.state.numLayers - 1; i++){
+          strings[j].push(<br />);
           strings[j].push("G1 Z" + intervalUp);
           strings[j].push(<br />);
           strings[j].push("G0 F4000");
           strings[j].push(<br />);
-          strings[j].push("G1 E50");
+          strings[j].push("G1 E" + (defaultExtrude * matrix[j]).toFixed(2));
           strings[j].push(<br />);
           strings[j].push("M400");
           strings[j].push(<br />);
@@ -225,11 +262,12 @@ class Menu extends Component {
           strings[j].push("G4 S5");
           strings[j].push(<br />);
         }
-        strings[j].push("G1 Z" + (intervalUp + 50));
+        strings[j].push("G1 Z" + (initialDown * -1 - (intervalUp * (this.state.numLayers - 1))));
         strings[j].push(<br />);
       }
     }
 
+    console.log(strings);
     this.setState({
       strings: strings
     });
