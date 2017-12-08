@@ -17,7 +17,7 @@ class GridMultiplier extends Component {
   handleRowChange(event){
     let rowVal = this.state.rowVal.slice(0, this.props.numRows);
     let rect = event.target.getBoundingClientRect();
-    var index = (rect.y - 227) / 40;
+    var index = (rect.y - 174) / 40;
 
     rowVal[index] = event.target.value;
 
