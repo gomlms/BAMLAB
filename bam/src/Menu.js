@@ -4,6 +4,7 @@ import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap
 import Layer from './Layer.js';
 import Buttons from './Buttons.js';
 import Grid from './GridMultiplier';
+import $ from 'jquery';
 
 class Menu extends Component {
 
@@ -267,9 +268,27 @@ class Menu extends Component {
       }
     }
 
+    var scaleCircles = [];
+
+    console.log(this.state.matrix[i*3] + 'POOP')
+
+    for(var i = 0; i < this.state.numLayers; i++){
+      scaleCircles.push(<img style={{
+        height: matrix[i*3]
+      }} src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Circle_-_black_simple.svg" />);
+      scaleCircles.push(<img style={{
+        height: matrix[i*3 + 1]
+      }} src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Circle_-_black_simple.svg" />);
+      scaleCircles.push(<img style={{
+        height: matrix[i*3 + 2]
+      }} src="https://upload.wikimedia.org/wikipedia/commons/a/a0/Circle_-_black_simple.svg" />);
+      scaleCircles.push(<br />);
+    }
+
     console.log(strings);
     this.setState({
-      strings: strings
+      strings: strings,
+      scaleCircles: scaleCircles
     });
   }
 
@@ -324,11 +343,14 @@ class Menu extends Component {
         <div className='displayOfSelection'>
           <Grid callBackRows={this.callBackRows} callBackCols={this.callBackCols} numRows={this.state.numLayers}/>
         </div>
-        <div className='genAndReset'>
-          <input type="button" value="Generate" onClick={this.getGCode} />
-          <br />
-          <input type="button" value="Reset" onClick={this.clear} />
+          <div className='genAndReset'>
+            <input type="button" value="Generate" onClick={this.getGCode} />
+            <br />
+            <input type="button" value="Reset" onClick={this.clear} />
+          </div>
         </div>
+        <div>
+          {this.state.scaleCircles}
         </div>
       </div>
       <div className='gcodeHolder'>

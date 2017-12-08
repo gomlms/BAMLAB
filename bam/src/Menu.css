@@ -94,3 +94,7 @@
   border-left: 5px solid black;
   background-size: cover;
 }
+
+.scaleCircle {
+  width: 50px
+}
