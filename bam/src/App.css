@@ -26,3 +26,7 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+html, body, #root, #root>div {
+  height: 100%
+}
