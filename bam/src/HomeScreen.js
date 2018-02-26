@@ -42,6 +42,8 @@ const styles = theme => ({
 
 class HomeScreen extends Component {
 
+  layerVal = [];
+
   constructor(props, context) {
     super(props, context);
 
@@ -50,10 +52,22 @@ class HomeScreen extends Component {
     this.handleCode = this.handleCode.bind(this);
 
     this.state = {
-      layerVal: [],
-      botVal: [],
+      botVal: [1,1,1],
       matrix: [],
-      code: 'M118 Cold Extrusion\nM302 S0\nG90\nM117 Calibration\nG0 Z45 F6000\nM117 Homing X and Y\nG28 X Y\nM117 Homing Z\nG0 X45 Y100\nG28 Z\nG90\nM117 Centering Needle Over Beaker\nG0 Z45\nG0 X137.50 Y67.50 (Center of plate)\nG90\nM117 Centering over Beaker\nG0 Z45 ; Raise to just above Beaker Rim\nG0 X137.50 Y67.\nM117 Switch to Relative Coordinates\nG91; Relative Coordiantes\n',
+      numLayers: 0,
+      vol: 500,
+      source1: './CircleWhite.svg',
+      source2: './CircleWhite.svg',
+      source3: './CircleWhite.svg',
+      showFirst: true,
+      showSecond: true,
+      showThird: true,
+      r45: "4.417",
+      idp: "4.417",
+      lecithin: "0.76",
+      ipdi: "0.41",
+      buttonColors: ["primary", "primary", "primary", "primary", "primary", "primary", "primary", "primary", "primary"],
+      code: 'M118 \r\nCold Extrusion\r\nM302 S0\r\nG90\r\nM117 Calibration\r\nG0 Z45 F6000\r\nM117 Homing X and Y\r\nG28 X Y\r\nM117 Homing Z\r\nG0 X45 Y100\r\nG28 Z\r\nG90\r\nM117 Centering Needle Over Beaker\r\nG0 Z45\r\nG0 X137.50 Y67.50 (Center of plate)\r\nG90\r\nM117 Centering over Beaker\r\nG0 Z45 ; Raise to just above Beaker Rim\r\nG0 X137.50 Y67.\r\nM117 Switch to Relative Coordinates\r\nG91; Relative Coordiantes\r\n',
     }
   }
 
@@ -65,17 +79,118 @@ class HomeScreen extends Component {
     element.click();
   }
 
-  handleVolChange(e){
-    this.setState({
-      vol: e.target.value
-    })
+  handleVolChange(e, num){
+    switch(num){
+      case 0:
+        this.setState({
+          r45: e.target.value,
+        })
+      break;
+      case 1:
+        this.setState({
+          idp: e.target.value,
+        })
+      break;
+      case 2:
+        this.setState({
+          lecithin: e.target.value,
+        })
+      break;
+      case 5:
+        this.setState({
+          ipdi: e.target.value,
+        })
+      break;
+    }
   }
 
-  handleLayerValChange(e, i, place){
+  handleLayerValChange(e, place){
     if(place === "side"){
+      this.layerVal[parseInt(e.target.id)] = parseInt(e.target.value) % 10 ? parseInt(e.target.value) % 10 : 1;
 
+      if(this.layerVal[parseInt(e.target.id)] > 3){
+        this.layerVal[parseInt(e.target.id)] = 3
+      }
+
+      var matrix = [];
+      var i = 0, j = 0;
+      for(i = 0; i < this.state.numLayers; i++){
+        for(j = 0; j < 3; j++){
+          matrix.push(this.state.botVal[j] * this.layerVal[i] * 25);
+        }
+      }
+
+      var grid = [];
+      var counter = 0;
+      for(i = 0; i < this.state.numLayers; i++){
+        grid.push(
+          <div key={i}>
+            <TextField
+              id={String(counter)}
+              key={i}
+              label="Layer"
+              value={this.layerVal[i]}
+              onChange={(e) => this.handleLayerValChange(e, "side")}
+              margin="normal"
+              style={{width: '10%', marginLeft: '-15%'}}
+            />
+            <div style={{display: 'flex', justifyContent: 'space-evenly', verticalAlign: 'middle'}}>
+              <img style={{height: matrix[i*3] + 'px', whitespace: 'nowrap'}}src={this.state.source1} />
+              <img style={{height: matrix[i*3 + 1] + 'px', whitespace: 'nowrap'}}src={this.state.source2} />
+              <img style={{height: matrix[i*3 + 2] + 'px', whitespace: 'nowrap'}}src={this.state.source3} />
+            </div>
+          </div>);
+        counter++;
+      }
+
+      this.setState({
+        matrix: matrix,
+        sideGrid: grid,
+      })
     } else {
+      var botVal = this.state.botVal;
+      botVal[parseInt(e.target.id)] = parseInt(e.target.value) % 10 ? parseInt(e.target.value) % 10 : 1;
 
+      if(botVal[parseInt(e.target.id)] > 3){
+        botVal[parseInt(e.target.id)] = 3
+      }
+
+      var matrix = [];
+      var i = 0, j = 0;
+      for(i = 0; i < this.state.numLayers; i++){
+        for(j = 0; j < 3; j++){
+          matrix.push(this.state.botVal[j] * this.layerVal[i] * 25);
+        }
+      }
+
+      var grid = [];
+      var counter = 0;
+      for(i = 0; i < this.state.numLayers; i++){
+        grid.push(
+          <div>
+            <TextField
+              id={String(counter)}
+              key={i}
+              label="Layer"
+              value={this.layerVal[i]}
+              onChange={(e) => this.handleLayerValChange(e, "side")}
+              margin="normal"
+              style={{width: '10%', marginLeft: '-15%'}}
+            />
+            <div style={{display: 'flex', justifyContent: 'space-evenly', verticalAlign: 'middle'}}>
+              <img style={{height: matrix[i*3] + 'px', whitespace: 'nowrap'}}src={this.state.source1} />
+              <img style={{height: matrix[i*3 + 1] + 'px', whitespace: 'nowrap'}}src={this.state.source2} />
+              <img style={{height: matrix[i*3 + 2] + 'px', whitespace: 'nowrap'}}src={this.state.source3} />
+            </div>
+          </div>);
+        counter++;
+      }
+
+      this.setState({
+        matrix: matrix,
+        sideGrid: grid,
+        botVal: botVal,
+      })
     }
   }
 
@@ -84,21 +199,60 @@ class HomeScreen extends Component {
     var i = 0;
     var counter = 0;
 
-    for(i = 0; i < e.target.value; i++){
-      grid.push(<TextField
-                  id={counter}
-                  label="Layer"
-                  value={this.state.layerVal[i]}
-                  onChange={(e) => this.handleLayerValChange(e, counter, "side")}
-                  margin="normal"
-                  style={{width: '10%', marginLeft: '-10%'}}
-                />);
+    var num = parseInt(e.target.value) % 10 ? parseInt(e.target.value) % 10 : 0;
+
+    if(num > 6){
+      num = 6;
+    }
+
+    for(i = 0; i < num; i++){
+      this.layerVal.push(1);
+    }
+
+    var matrix = [];
+    var i = 0, j = 0;
+    for(i = 0; i < 3; i++){
+      for(j = 0; j < num; j++){
+        matrix.push(this.state.botVal[i] * this.layerVal[j] * 25);
+      }
+    }
+
+    this.setState({
+      numLayers: num,
+      matrix: matrix,
+    }, () => {
+      this.createGrid();
+    })
+  }
+
+  createGrid(){
+    var grid = [];
+    var i = 0;
+    var counter = 0;
+
+    for(i = 0; i < this.state.numLayers; i++){
+      grid.push(
+        <div key={i}>
+          <TextField
+            id={String(counter)}
+            key={i}
+            label="Layer"
+            value={this.layerVal[i]}
+            onChange={(e) => this.handleLayerValChange(e, "side")}
+            margin="normal"
+            style={{width: '10%', marginLeft: '-15%'}}
+          />
+          <div style={{display: 'flex', justifyContent: 'space-evenly', verticalAlign: 'middle'}}>
+            <img style={{height: this.state.matrix[i*3] + 'px', whitespace: 'nowrap'}}src={this.state.source1} />
+            <img style={{height: this.state.matrix[i*3 + 1] + 'px', whitespace: 'nowrap'}}src={this.state.source2} />
+            <img style={{height: this.state.matrix[i*3 + 2] + 'px', whitespace: 'nowrap'}}src={this.state.source3} />
+          </div>
+        </div>);
       counter++;
     }
 
     this.setState({
-      numLayers: e.target.value,
-      sideGrid: grid,
+      sideGrid: grid
     })
   }
 
@@ -106,6 +260,68 @@ class HomeScreen extends Component {
     this.setState({
       code: this.state.code + e.target.value,
     })
+  }
+
+  enableColumn(num){
+    var buttonColors = this.state.buttonColors;
+    var showFirst = true;
+    var showSecond = true;
+    var showThird = true;
+
+    if(buttonColors[num] === "primary"){
+      buttonColors[num] = "inherit";
+    } else{
+      buttonColors[num] = "primary";
+    }
+
+    if(buttonColors[0] === "inherit" && buttonColors[3] === "inherit" && buttonColors[6] === "inherit"){
+      showFirst = false;
+    }
+    if(buttonColors[1] === "inherit" && buttonColors[4] === "inherit" && buttonColors[7] === "inherit"){
+      showSecond = false;
+    }
+    if(buttonColors[2] === "inherit" && buttonColors[5] === "inherit" && buttonColors[8] === "inherit"){
+      showThird = false;
+    }
+
+    var grid = [];
+    var i = 0;
+    var counter = 0;
+
+    for(i = 0; i < this.state.numLayers; i++){
+      grid.push(
+        <div key={i}>
+          <TextField
+            id={String(counter)}
+            key={i}
+            label="Layer"
+            value={this.layerVal[i]}
+            onChange={(e) => this.handleLayerValChange(e, "side")}
+            margin="normal"
+            style={{width: '10%', marginLeft: '-15%'}}
+          />
+          <div style={{display: 'flex', justifyContent: 'space-evenly', verticalAlign: 'middle'}}>
+            {showFirst &&
+              <img style={{height: this.state.matrix[i*3] + 'px', whitespace: 'nowrap'}}src={this.state.source1} />
+            }
+            {showSecond &&
+              <img style={{height: this.state.matrix[i*3 + 1] + 'px', whitespace: 'nowrap'}}src={this.state.source2} />
+            }
+            {showThird &&
+              <img style={{height: this.state.matrix[i*3 + 2] + 'px', whitespace: 'nowrap'}}src={this.state.source3} />
+            }
+          </div>
+        </div>);
+      counter++;
+    }
+
+    this.setState({
+      buttonColors: buttonColors,
+      sideGrid: grid,
+      showFirst: showFirst,
+      showSecond: showSecond,
+      showThird: showThird,
+    });
   }
 
   render(){
@@ -134,12 +350,14 @@ class HomeScreen extends Component {
 
     const rightPanelStyle = {
       width: '40%',
-      backgroundImage: 'url("/beaker.png")',
+      backgroundImage: 'url("/Cup.png")',
       backgroundRepeat: 'no-repeat',
       backgroundSize: '80% 80%',
       backgroundPosition: 'center center',
       marginTop: '1%',
       marginRight: '1%',
+      position: 'relative',
+      display: 'inline'
     }
 
     const inputSideLineStyle = {
@@ -158,11 +376,14 @@ class HomeScreen extends Component {
     }
 
     const topBeakerBackground = {
-      paddingTop: '5%',
+      paddingTop: '100px',
       textAlign: 'left',
+      marginLeft: '10%',
     }
     const downloadStyle = {
-      paddingTop: '5%',
+      position: 'absolute',
+      bottom: '2%',
+      left: '2%',
     }
 
     return(
@@ -179,14 +400,39 @@ class HomeScreen extends Component {
             <Paper style={inputPaperStyle} elevation={4}>
               <div>
                 <TextField
-                  id="vol"
-                  label="Volume of Solids"
-                  value={this.state.vol}
-                  onChange={this.handleVolChange}
+                  id="r45"
+                  label="R45 %"
+                  value={this.state.r45}
+                  onChange={(e) => this.handleVolChange(e,0)}
+                  margin="normal"
+                  style={textFieldStyle}
+                />
+                <TextField
+                  id="idp"
+                  label="IDP %"
+                  value={this.state.idp}
+                  onChange={(e) => this.handleVolChange(e,1)}
+                  margin="normal"
+                  style={textFieldStyle}
+                />
+                <TextField
+                  id="lecithin"
+                  label="Lecithin %"
+                  value={this.state.lecithin}
+                  onChange={(e) => this.handleVolChange(e,2)}
+                  margin="normal"
+                  style={textFieldStyle}
+                />
+                <TextField
+                  id="ipdi"
+                  label="IPDI %"
+                  value={this.state.ipdi}
+                  onChange={(e) => this.handleVolChange(e,5)}
                   margin="normal"
                   style={textFieldStyle}
                 />
               </div>
+              <br />
               <div>
                 <TextField
                   id="layers"
@@ -199,39 +445,34 @@ class HomeScreen extends Component {
               </div>
             </Paper>
             <div style={topBeakerBackground}>
-              <span style={topBeakerBackground}>
-                <Button fab style={{outline: 'none'}} aria-label="add">
-                  <AddIcon />
-                </Button>
-                <Button fab style={{outline: 'none'}} aria-label="add">
-                  <AddIcon />
-                </Button>
-                <Button fab style={{outline: 'none'}} aria-label="add">
-                  <AddIcon />
-                </Button>
-                <Button fab style={{outline: 'none'}} aria-label="add">
-                  <AddIcon />
-                </Button>
-                <Button fab style={{outline: 'none'}} aria-label="add">
-                  <AddIcon />
-                </Button>
-                <Button fab style={{outline: 'none'}} aria-label="add">
-                  <AddIcon />
-                </Button>
-                <Button fab style={{outline: 'none'}} aria-label="add">
-                  <AddIcon />
-                </Button>
-                <Button fab style={{outline: 'none'}} aria-label="add">
-                  <AddIcon />
-                </Button>
-                <Button fab style={{outline: 'none'}} aria-label="add">
-                  <AddIcon />
-                </Button>
-              </span>
-            </div>
-            <div style={downloadStyle}>
-              <Button onClick={this.downloadTxtFile} style={{outline: 'none'}} raised size="small">
-                <img src="https://png.icons8.com/ios/50/000000/download-from-cloud-filled.png" />
+              <Button fab color={this.state.buttonColors[0]} onClick={() => this.enableColumn(0)} style={{outline: 'none'}} aria-label="add">
+                <AddIcon />
+              </Button>
+              <Button fab color={this.state.buttonColors[1]} onClick={() => this.enableColumn(1)} style={{outline: 'none', marginLeft: '2%'}} aria-label="add">
+                <AddIcon />
+              </Button>
+              <Button fab color={this.state.buttonColors[2]} onClick={() => this.enableColumn(2)} style={{outline: 'none', marginLeft: '2%'}} aria-label="add">
+                <AddIcon />
+              </Button>
+              <br/>
+              <Button fab color={this.state.buttonColors[3]} onClick={() => this.enableColumn(3)} style={{outline: 'none', marginTop: '2%'}} aria-label="add">
+                <AddIcon />
+              </Button>
+              <Button fab color={this.state.buttonColors[4]} onClick={() => this.enableColumn(4)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
+                <AddIcon />
+              </Button>
+              <Button fab color={this.state.buttonColors[5]} onClick={() => this.enableColumn(5)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
+                <AddIcon />
+              </Button>
+              <br/>
+              <Button fab color={this.state.buttonColors[6]} onClick={() => this.enableColumn(6)} style={{outline: 'none', marginTop: '2%'}} aria-label="add">
+                <AddIcon />
+              </Button>
+              <Button fab color={this.state.buttonColors[7]} onClick={() => this.enableColumn(7)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
+                <AddIcon />
+              </Button>
+              <Button fab color={this.state.buttonColors[8]} onClick={() => this.enableColumn(8)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
+                <AddIcon />
               </Button>
             </div>
           </div>
@@ -239,33 +480,45 @@ class HomeScreen extends Component {
             <div style={inputSideLineStyle}>
               {this.state.sideGrid}
             </div>
+            {this.state.points}
             <div style={inputBotLineStyle}>
-              <TextField
-                id={0}
-                label="Layer"
-                value={this.state.botVal[0]}
-                onChange={(e) => this.handleLayerValChange(e, 0, "bot")}
-                margin="normal"
-                style={{width: '10%'}}
-              />
-              <TextField
-                id={1}
-                label="Layer"
-                value={this.state.layerVal[1]}
-                onChange={(e) => this.handleLayerValChange(e, 1, "bot")}
-                margin="normal"
-                style={{width: '10%'}}
-              />
-              <TextField
-                id={2}
-                label="Layer"
-                value={this.state.layerVal[2]}
-                onChange={(e) => this.handleLayerValChange(e, 2, "bot")}
-                margin="normal"
-                style={{width: '10%'}}
-              />
+              {this.state.showFirst &&
+                <TextField
+                  id="0"
+                  label="Layer"
+                  value={this.state.botVal[0]}
+                  onChange={(e) => this.handleLayerValChange(e, "bot")}
+                  margin="normal"
+                  style={{width: '10%', marginTop: '25px'}}
+                />
+              }
+              {this.state.showSecond &&
+                <TextField
+                  id="1"
+                  label="Layer"
+                  value={this.state.botVal[1]}
+                  onChange={(e) => this.handleLayerValChange(e, "bot")}
+                  margin="normal"
+                  style={{width: '10%', marginTop: '25px'}}
+                />
+              }
+              {this.state.showThird &&
+                <TextField
+                  id="2"
+                  label="Layer"
+                  value={this.state.botVal[2]}
+                  onChange={(e) => this.handleLayerValChange(e, "bot")}
+                  margin="normal"
+                  style={{width: '10%', marginTop: '25px'}}
+                />
+              }
             </div>
           </div>
+        </div>
+        <div style={downloadStyle}>
+          <Button onClick={this.downloadTxtFile} style={{outline: 'none'}} raised size="small">
+            <img src="https://png.icons8.com/ios/50/000000/download-from-cloud-filled.png" />
+          </Button>
         </div>
       </div>
     );
