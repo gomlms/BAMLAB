@@ -14,6 +14,7 @@ import Paper from 'material-ui/Paper';
 import Button from 'material-ui/Button';
 import AddIcon from 'material-ui-icons/Add';
 import Save from 'material-ui-icons/Save';
+import Menu, { MenuItem } from 'material-ui/Menu';
 
 const theme = createMuiTheme({
   palette: {
@@ -54,6 +55,7 @@ class HomeScreen extends Component {
     this.state = {
       botVal: [1,1,1],
       matrix: [],
+      printMatrix: [false,false,false,false,false,false,false,false,false],
       numLayers: 0,
       vol: 500,
       source1: './CircleWhite.svg',
@@ -64,16 +66,111 @@ class HomeScreen extends Component {
       showThird: true,
       r45: "4.417",
       idp: "4.417",
+      course: "20.25",
+      fine: "6.75",
       lecithin: "0.76",
       ipdi: "0.41",
       buttonColors: ["primary", "primary", "primary", "primary", "primary", "primary", "primary", "primary", "primary"],
-      code: 'M118 \r\nCold Extrusion\r\nM302 S0\r\nG90\r\nM117 Calibration\r\nG0 Z45 F6000\r\nM117 Homing X and Y\r\nG28 X Y\r\nM117 Homing Z\r\nG0 X45 Y100\r\nG28 Z\r\nG90\r\nM117 Centering Needle Over Beaker\r\nG0 Z45\r\nG0 X137.50 Y67.50 (Center of plate)\r\nG90\r\nM117 Centering over Beaker\r\nG0 Z45 ; Raise to just above Beaker Rim\r\nG0 X137.50 Y67.\r\nM117 Switch to Relative Coordinates\r\nG91; Relative Coordiantes\r\n',
+      code: 'M118 \r\nCold Extrusion\r\nM302 S0\r\nG90\r\nM117 Calibration\r\nG0 Z45 F6000\r\nM117 Homing X and Y\r\nG28 X Y\r\nM117 Homing Z\r\nG0 X45 Y100\r\nG28 Z\r\nG90\r\nM117 Centering Needle Over Beaker\r\nG0 Z45\r\nG0 X137.50 Y67.50 (Center of plate)\r\nG90\r\nM117 Centering over Beaker\r\nG0 Z45 ; Raise to just above Beaker Rim\r\nG0 X137.50 Y67.\r\nM117 Switch to Relative Coordinates\r\nG91; Relative Coordiantes\r\nG1 X40 Y40\r\nM400\r\n',
     }
   }
 
   downloadTxtFile = () => {
     var element = document.createElement("a");
-    var file = new Blob([this.state.code], {type: 'text/plain'});
+
+    /*Check all the variables and change the gcode*/
+
+    /* Get text from each variable in state and parse it into an float variable */
+
+//JosHS Variables
+    // var height=100;
+    // var layersNeeded=4;
+    // var u=layersNeeded;
+    // var distanceBetweenLayers=height/(layersNeeded+1);
+    // var distanceToCurrentLayer= height;
+    var i = 0;
+    var y = 0;
+    var currLayer = 1;
+    var moveUp = false;
+    var amountUp = (100 / this.state.numLayers + 1);
+    var amountDown = -amountUp;
+    var totalUp = 100 - amountUp;
+    var totalDown = -totalUp;
+    var codeHolder = this.state.code;
+    var angleNeg = "90";
+    var anglePos = "-90";
+    var print = this.state.printMatrix;
+
+    for(y = 0; y < this.state.numLayers; y ++){
+      codeHolder +=
+        "G1 X-18 Y-18" + "\r\n" +  //moves to the bottom left of the square
+        "M400" + + "\r\n" +
+        "G91" + "\r\n"; //changes to relative positioning
+      for(i = 0; i < this.state.matrix.length; i++) {
+        if(i % 3 === 0) {
+          if(print[i] === true){
+            codeHolder +=
+              "G1 Z" + totalDown + "\r\n" +
+              "M400" + "\r\n"+
+              "G1 E40 F4000" + "\r\n" +
+              "M400" + "\r\n" +
+              "G1 E-25" + "\r\n" +
+              "M400" + "\r\n" +
+              "G1 Z" + totalUp + "\r\n";
+          }
+        } else if(i % 3 === 1) {
+          codeHolder +=
+            "G1 X18" + "\r\n" +
+            "M400" + + "\r\n";
+            if(print[i] === true) {
+              codeHolder +=
+                "G1 Z" + totalDown + "\r\n" +
+                "M400" + "\r\n"+
+                "G1 E40 F4000" + "\r\n" +
+                "M400" + "\r\n" +
+                "G1 E-25" + "\r\n" +
+                "M400" + "\r\n" +
+                "G1 Z" + totalUp + "\r\n";
+            }
+        } else if(i % 3 === 2) {
+          codeHolder +=
+            "G1 X18" + "\r\n" +
+            "M400" + + "\r\n";
+            if(print[i] === true) {
+              codeHolder +=
+                "G1 Z" + totalDown + "\r\n" +
+                "M400" + "\r\n"+
+                "G1 E40 F4000" + "\r\n" +
+                "M400" + "\r\n" +
+                "G1 E-25" + "\r\n" +
+                "M400" + "\r\n" +
+                "G1 Z" + totalUp + "\r\n";
+            }
+          moveUp = true;
+        }
+
+        if(moveUp) {
+          codeHolder +=
+            "G1 Y18" + "\r\n";
+        }
+        moveUp = false;
+      }
+      if(currLayer% 2 === 0) {
+        codeHolder += "M280 p0 " + angleNeg + "\r\n";
+      } else {
+        codeHolder += "M280 p0 " + angleNeg + "\r\n";
+      }
+      codeHolder += "G90" + "\r\n"; //changes back to absolute positioning
+      totalUp = totalUp + amountUp;
+      totalDown = totalDown + amountDown;
+      currLayer++;
+    }
+
+    this.setState({
+      code: codeHolder,
+    })
+
+    var file = new Blob([codeHolder], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
     element.download = "BAM Creation";
     element.click();
@@ -94,6 +191,16 @@ class HomeScreen extends Component {
       case 2:
         this.setState({
           lecithin: e.target.value,
+        })
+      break;
+      case 3:
+        this.setState({
+          course: e.target.value,
+        })
+      break;
+      case 4:
+        this.setState({
+          fine: e.target.value,
         })
       break;
       case 5:
@@ -264,6 +371,7 @@ class HomeScreen extends Component {
 
   enableColumn(num){
     var buttonColors = this.state.buttonColors;
+    var printHolder = this.state.printMatrix;
     var showFirst = true;
     var showSecond = true;
     var showThird = true;
@@ -272,6 +380,13 @@ class HomeScreen extends Component {
       buttonColors[num] = "inherit";
     } else{
       buttonColors[num] = "primary";
+    }
+
+    if(printHolder[num] === false) {
+      printHolder[num] = true;
+      this.setState({
+        printMatrix: printHolder,
+      })
     }
 
     if(buttonColors[0] === "inherit" && buttonColors[3] === "inherit" && buttonColors[6] === "inherit"){
@@ -400,34 +515,18 @@ class HomeScreen extends Component {
             <Paper style={inputPaperStyle} elevation={4}>
               <div>
                 <TextField
-                  id="r45"
-                  label="R45 %"
-                  value={this.state.r45}
-                  onChange={(e) => this.handleVolChange(e,0)}
+                  id="course"
+                  label="Course Sand (g)"
+                  value={this.state.course}
+                  onChange={(e) => this.handleVolChange(e,3)}
                   margin="normal"
                   style={textFieldStyle}
                 />
                 <TextField
-                  id="idp"
-                  label="IDP %"
-                  value={this.state.idp}
-                  onChange={(e) => this.handleVolChange(e,1)}
-                  margin="normal"
-                  style={textFieldStyle}
-                />
-                <TextField
-                  id="lecithin"
-                  label="Lecithin %"
-                  value={this.state.lecithin}
-                  onChange={(e) => this.handleVolChange(e,2)}
-                  margin="normal"
-                  style={textFieldStyle}
-                />
-                <TextField
-                  id="ipdi"
-                  label="IPDI %"
-                  value={this.state.ipdi}
-                  onChange={(e) => this.handleVolChange(e,5)}
+                  id="fine"
+                  label="Fine Sand (g)"
+                  value={this.state.fine}
+                  onChange={(e) => this.handleVolChange(e,4)}
                   margin="normal"
                   style={textFieldStyle}
                 />
