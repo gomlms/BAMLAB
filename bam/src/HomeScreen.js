@@ -100,13 +100,20 @@ class HomeScreen extends Component {
     var angleNeg = "90";
     var anglePos = "-90";
     var print = this.state.printMatrix;
+    var amountLayers = this.state.numLayers;
 
-    for(y = 0; y < this.state.numLayers; y ++){
-      codeHolder +=
-        "G1 X-18 Y-18" + "\r\n" +  //moves to the bottom left of the square
-        "M400" + + "\r\n" +
-        "G91" + "\r\n"; //changes to relative positioning
-      for(i = 0; i < this.state.matrix.length; i++) {
+    codeHolder +=
+      "G1 X-18 Y-18" + "\r\n";
+
+    for(y = 0; y < amountLayers; y ++){
+        if(y >= 1) {
+          codeHolder +=
+            "G1 X-36" + "\r\n";
+        }  //moves to the bottom left of the square
+        codeHolder +=
+          "M400" + "\r\n" +
+          "G91" + "\r\n"; //changes to relative positioning
+      for(i = 0; i < 9; i++) {
         if(i % 3 === 0) {
           if(print[i] === true){
             codeHolder +=
@@ -544,17 +551,17 @@ class HomeScreen extends Component {
               </div>
             </Paper>
             <div style={topBeakerBackground}>
-              <Button fab color={this.state.buttonColors[0]} onClick={() => this.enableColumn(0)} style={{outline: 'none'}} aria-label="add">
+              <Button fab color={this.state.buttonColors[0]} onClick={() => this.enableColumn(8)} style={{outline: 'none'}} aria-label="add">
                 <AddIcon />
               </Button>
-              <Button fab color={this.state.buttonColors[1]} onClick={() => this.enableColumn(1)} style={{outline: 'none', marginLeft: '2%'}} aria-label="add">
+              <Button fab color={this.state.buttonColors[1]} onClick={() => this.enableColumn(7)} style={{outline: 'none', marginLeft: '2%'}} aria-label="add">
                 <AddIcon />
               </Button>
-              <Button fab color={this.state.buttonColors[2]} onClick={() => this.enableColumn(2)} style={{outline: 'none', marginLeft: '2%'}} aria-label="add">
+              <Button fab color={this.state.buttonColors[2]} onClick={() => this.enableColumn(6)} style={{outline: 'none', marginLeft: '2%'}} aria-label="add">
                 <AddIcon />
               </Button>
               <br/>
-              <Button fab color={this.state.buttonColors[3]} onClick={() => this.enableColumn(3)} style={{outline: 'none', marginTop: '2%'}} aria-label="add">
+              <Button fab color={this.state.buttonColors[3]} onClick={() => this.enableColumn(4)} style={{outline: 'none', marginTop: '2%'}} aria-label="add">
                 <AddIcon />
               </Button>
               <Button fab color={this.state.buttonColors[4]} onClick={() => this.enableColumn(4)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
@@ -564,13 +571,13 @@ class HomeScreen extends Component {
                 <AddIcon />
               </Button>
               <br/>
-              <Button fab color={this.state.buttonColors[6]} onClick={() => this.enableColumn(6)} style={{outline: 'none', marginTop: '2%'}} aria-label="add">
+              <Button fab color={this.state.buttonColors[6]} onClick={() => this.enableColumn(0)} style={{outline: 'none', marginTop: '2%'}} aria-label="add">
                 <AddIcon />
               </Button>
-              <Button fab color={this.state.buttonColors[7]} onClick={() => this.enableColumn(7)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
+              <Button fab color={this.state.buttonColors[7]} onClick={() => this.enableColumn(1)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
                 <AddIcon />
               </Button>
-              <Button fab color={this.state.buttonColors[8]} onClick={() => this.enableColumn(8)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
+              <Button fab color={this.state.buttonColors[8]} onClick={() => this.enableColumn(2)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
                 <AddIcon />
               </Button>
             </div>
