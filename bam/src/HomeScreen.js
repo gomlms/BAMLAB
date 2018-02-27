@@ -158,7 +158,8 @@ class HomeScreen extends Component {
 
         if(moveUp) {
           codeHolder +=
-            "G1 Y18" + "\r\n";
+            "G1 Y18" + "\r\n" +
+            "G1 X-18";
         }
         moveUp = false;
       }
