@@ -261,7 +261,9 @@ class HomeScreen extends Component {
 
     var file = new Blob([codeHolder], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
-    element.download = "BAM Creation";
+    console.log(element);
+    console.log(element.href);
+    element.download = "BAM Creation.gcode";
     element.click();
   }
 
