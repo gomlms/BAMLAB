@@ -44,7 +44,7 @@ const styles = theme => ({
 class HomeScreen extends Component {
 
   layerVal = [];
-  materialOptions = ["M280 p0 20\r\n", "M280 p0 90\r\n"]
+  materialOptions = ["M280 p0 20\r\n", "M280 p0 90\r\n"];
 
   constructor(props, context) {
     super(props, context);
@@ -68,12 +68,14 @@ class HomeScreen extends Component {
       r45: "4.417",
       idp: "4.417",
       type: [],
-      course: "20.25",
+      coarse: "20.25",
       fine: "6.75",
       lecithin: "0.76",
       ipdi: "0.41",
+      curMaterial: 0,
+      curMaterialText: "Mix 1",
       buttonColors: ["primary", "primary", "primary", "primary", "primary", "primary", "primary", "primary", "primary"],
-      code: "G28; Homing\r\n;Centering\r\nG90 ; absoulte position\r\nG1 Z66 X140 F6000;\r\nG1 Y66;\r\nM280 P0              ; REPORT SERVO ANGLE\r\nM280 P0 S20     ; MAKE SERVO GO TO SXX POSITION\r\nM280 P0              ; REPORT SERVO ANGLE\r\nG4 S1\r\nM280 P0 S90       ; MAKE SERVO GO TO SXX POSITION" + "\r\nM280 P0               ; REPORT SERVO ANGLE\r\n",
+      code: "G28; Homing\r\n;Centering\r\nG90 ; absolte position\r\nG1 Z66 X140 F6000;\r\nG1 Y66;\r\nM280 P0              ; REPORT SERVO ANGLE\r\nM280 P0 S20     ; MAKE SERVO GO TO SXX POSITION\r\nM280 P0              ; REPORT SERVO ANGLE\r\nG4 S1\r\nM280 P0 S90       ; MAKE SERVO GO TO SXX POSITION" + "\r\nM280 P0               ; REPORT SERVO ANGLE\r\n",
     }
   }
 
@@ -102,63 +104,84 @@ class HomeScreen extends Component {
     var angleNeg = "90";
     var anglePos = "-90";
     var print = this.state.printMatrix;
+    var cur;
+    var prev;
+
+    var flowRate = "3000";
 
     codeHolder += "G1 X-18 Y18" + "\r\n";
 
-    console.log("SHIT");
+    if(this.state.curMaterial === 0) {
+      cur = "G280 P0 S20\r\n";
+      prev = "G280 P0 S90\r\n";
+      codeHolder += "G280 P0 S20\r\n";
+    } else {
+      cur ="G280 P0 S90\r\n";
+      prev = "G280 P0 S20\r\n";
+      codeHolder += "G280 P0 S90\r\n";
+    }
 
-    var curMaterial = 0;
     for(y = 0; y < this.state.numLayers; y++){
       codeHolder += this.materialOptions[0];
       for(i = 0; i < 9; i++){
+        codeHolder += "G90\r\nG1 Z66\r\n";
+        if(i % 2 === 0) {
+          cur = prev;
+          prev = cur;
+        }
         switch(i){
           case 0:
-            codeHolder += "G90\r\nG1 Z66 X122 Y84\r\n";
+            codeHolder += "G1 Z66 X122 Y84\r\n";
             break;
           case 1:
-            codeHolder += "G90\r\nG1 Z66 X140 Y84\r\n";
+            codeHolder += "G1 Z66 X140 Y84\r\n";
             break;
           case 2:
-            codeHolder += "G90\r\nG1 Z66 X158 Y84\r\n";
+            codeHolder += "G1 Z66 X158 Y84\r\n";
             break;
           case 3:
-            codeHolder += "G90\r\nG1 Z66 X122 Y66\r\n";
+            codeHolder += "G1 Z66 X122 Y66\r\n";
             break;
           case 4:
-            codeHolder += "G90\r\nG1 Z66 X140 Y66\r\n";
+            codeHolder += "G1 Z66 X140 Y66\r\n";
             break;
           case 5:
-            codeHolder += "G90\r\nG1 Z66 X158 Y66\r\n";
+            codeHolder += "G1 Z66 X158 Y66\r\n";
             break;
           case 6:
-            codeHolder += "G90\r\nG1 Z66 X122 Y48 \r\n";
+            codeHolder += "G1 Z66 X122 Y48 \r\n";
             break;
           case 7:
-            codeHolder += "G90\r\nG1 Z66 X140 Y48\r\n";
+            codeHolder += "G1 Z66 X140 Y48\r\n";
             break;
           case 8:
-            codeHolder += "G90\r\nG1 Z66 X158 Y48\r\n";
+            codeHolder += "G1 Z66 X158 Y48\r\n";
             break;
         }
         if(print[i]){
-          var totalMats = this.state.coarse + this.state.fine;
-          var totalMats = totalMats / 0.9;
-          var j = 0;
-          var totalCos;
+          var totalMats = (parseFloat(this.state.coarse) + parseFloat(this.state.fine)) * 10 / 9;
+          var j = 0, k = 0;
+          var totalCos = 0;
 
-          for(j = 0; j < this.state.matrix.length; j++){
-            totalCos += this.state.matrix[j];
+          for(k = 0; k < 3; k++){
+            for(j = 0; j < this.state.matrix.length; j++){
+              totalCos += (this.state.matrix[j] / 25);
+            }
           }
 
           var extrude = (0.0959) * totalMats / totalCos;
 
-          if(curMaterial === 1){
+          if(this.state.curMaterial === 1){
             extrude = (0.0041) * totalMats / totalCos;
           }
 
-          codeHolder += "G91\r\nG1 Z" + totalDown + "\r\n" +
+          extrude = (this.state.matrix[(i%3)*(y+1)] / 25) * extrude;
+
+          extrude = Math.round(extrude / (0.001747) * 100) / 100;
+
+          codeHolder += cur + "G91\r\nG1 Z" + totalDown + "\r\n" +
                         "M400" + "\r\n"+
-                        "G1 E" + this.state.matrix[i*(y+1)] * extrude + "F6000" + "\r\n" +
+                        "G1 E" + extrude + " F" + flowRate + "\r\n" +
                         "M400" + "\r\n" +
                         "G1 E-25" + "\r\n" +
                         "M400" + "\r\n" +
@@ -236,10 +259,6 @@ class HomeScreen extends Component {
     //   currLayer++;
     // }
 
-    this.setState({
-      code: codeHolder,
-    })
-
     var file = new Blob([codeHolder], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
     element.download = "BAM Creation";
@@ -265,7 +284,7 @@ class HomeScreen extends Component {
       break;
       case 3:
         this.setState({
-          course: e.target.value,
+          coarse: e.target.value,
         })
       break;
       case 4:
@@ -303,19 +322,6 @@ class HomeScreen extends Component {
         grid.push(
           <div key={i}>
             <div key={i}>
-              {/* <TextField
-                id={"d" + String(counter)}
-                key={"10" + i}
-                select
-                label="Material"
-                value={this.state.type[i]}
-                onChange={(e) => this.handleTypeChange(e, String(counter))}
-                margin="normal"
-                style={{marginLeft: '-30%'}}
-              >
-                <MenuItem id={String(counter)} value="Mix 1">Mix 1</MenuItem>
-                <MenuItem id={String(counter)} value="Mix 2">Mix 2</MenuItem>
-              </TextField> */}
               <TextField
                 id={String(counter)}
                 key={"20" + i}
@@ -435,14 +441,18 @@ class HomeScreen extends Component {
     })
   }
 
-  handleTypeChange(e, i){
-    var type = this.state.type;
-    type[parseInt(e.currentTarget.id)] = e.target.value;
+  handleTypeChange(e){
+    var text = "";
+
+    if(parseInt(e.target.value) === 0){
+      text = "Mix 1";
+    } else {
+      text = "Mix 2";
+    }
 
     this.setState({
-      type: type,
-    }, () => {
-      this.createGrid();
+      curMaterial: parseInt(e.target.value),
+      curMaterialText: text,
     });
   }
 
@@ -642,9 +652,9 @@ class HomeScreen extends Component {
             <Paper style={inputPaperStyle} elevation={4}>
               <div>
                 <TextField
-                  id="course"
-                  label="Course Sand (g)"
-                  value={this.state.course}
+                  id="coarse"
+                  label="Coarse Sand (g)"
+                  value={this.state.coarse}
                   onChange={(e) => this.handleVolChange(e,3)}
                   margin="normal"
                   style={textFieldStyle}
@@ -668,6 +678,17 @@ class HomeScreen extends Component {
                   margin="normal"
                   style={textFieldStyle}
                 />
+                <TextField
+                  select
+                  label="Material"
+                  value={this.state.curMaterialText}
+                  onChange={(e) => this.handleTypeChange(e)}
+                  margin="normal"
+                  style={{marginLeft: "20px", width: "35%"}}
+                >
+                  <MenuItem value="0">Mix 1</MenuItem>
+                  <MenuItem value="1">Mix 2</MenuItem>
+                </TextField>
               </div>
             </Paper>
             <div style={topBeakerBackground}>
