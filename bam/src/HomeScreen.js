@@ -44,6 +44,7 @@ const styles = theme => ({
 class HomeScreen extends Component {
 
   layerVal = [];
+  materialOptions = ["M280 p0 20\r\n", "M280 p0 90\r\n"]
 
   constructor(props, context) {
     super(props, context);
@@ -66,12 +67,13 @@ class HomeScreen extends Component {
       showThird: true,
       r45: "4.417",
       idp: "4.417",
+      type: [],
       course: "20.25",
       fine: "6.75",
       lecithin: "0.76",
       ipdi: "0.41",
       buttonColors: ["primary", "primary", "primary", "primary", "primary", "primary", "primary", "primary", "primary"],
-      code: 'M118 \r\nCold Extrusion\r\nM302 S0\r\nG90\r\nM117 Calibration\r\nG0 Z45 F6000\r\nM117 Homing X and Y\r\nG28 X Y\r\nM117 Homing Z\r\nG0 X45 Y100\r\nG28 Z\r\nG90\r\nM117 Centering Needle Over Beaker\r\nG0 Z45\r\nG0 X137.50 Y67.50 (Center of plate)\r\nG90\r\nM117 Centering over Beaker\r\nG0 Z45 ; Raise to just above Beaker Rim\r\nG0 X137.50 Y67.\r\nM117 Switch to Relative Coordinates\r\nG91; Relative Coordiantes\r\nG1 X40 Y40\r\nM400\r\n',
+      code: "G28; Homing\r\n;Centering\r\nG90 ; absoulte position\r\nG1 Z66 X140 F6000;\r\nG1 Y66;\r\nM280 P0              ; REPORT SERVO ANGLE\r\nM280 P0 S20     ; MAKE SERVO GO TO SXX POSITION\r\nM280 P0              ; REPORT SERVO ANGLE\r\nG4 S1\r\nM280 P0 S90       ; MAKE SERVO GO TO SXX POSITION" + "\r\nM280 P0               ; REPORT SERVO ANGLE\r\n",
     }
   }
 
@@ -92,7 +94,7 @@ class HomeScreen extends Component {
     var y = 0;
     var currLayer = 1;
     var moveUp = false;
-    var amountUp = (100 / (this.state.numLayers + 1));
+    var amountUp = Math.round(100 / (this.state.numLayers + 1) * 100) / 100;
     var amountDown = -amountUp;
     var totalUp = 100 - amountUp;
     var totalDown = -totalUp;
@@ -100,81 +102,139 @@ class HomeScreen extends Component {
     var angleNeg = "90";
     var anglePos = "-90";
     var print = this.state.printMatrix;
-    var amountLayers = this.state.numLayers;
 
-    codeHolder +=
-      "G1 X-18 Y-18" + "\r\n";
+    codeHolder += "G1 X-18 Y18" + "\r\n";
 
-    console.log(amountUp);
+    console.log("SHIT");
 
-    for(y = 0; y < amountLayers; y ++){
-        if(y >= 1) {
-          codeHolder +=
-            "G1 X-36" + "\r\n";
-        }  //moves to the bottom left of the square
-        codeHolder +=
-          "M400" + "\r\n" +
-          "G91" + "\r\n"; //changes to relative positioning
-      for(i = 0; i < 9; i++) {
-        if(i % 3 === 0) {
-          if(print[i] === true){
-            codeHolder +=
-              "G1 Z" + totalDown + "\r\n" +
-              "M400" + "\r\n"+
-              "G1 E40 F4000" + "\r\n" +
-              "M400" + "\r\n" +
-              "G1 E-25" + "\r\n" +
-              "M400" + "\r\n" +
-              "G1 Z" + totalUp + "\r\n";
+    var curMaterial = 0;
+    for(y = 0; y < this.state.numLayers; y++){
+      codeHolder += this.materialOptions[0];
+      for(i = 0; i < 9; i++){
+        switch(i){
+          case 0:
+            codeHolder += "G90\r\nG1 Z66 X122 Y84\r\n";
+            break;
+          case 1:
+            codeHolder += "G90\r\nG1 Z66 X140 Y84\r\n";
+            break;
+          case 2:
+            codeHolder += "G90\r\nG1 Z66 X158 Y84\r\n";
+            break;
+          case 3:
+            codeHolder += "G90\r\nG1 Z66 X122 Y66\r\n";
+            break;
+          case 4:
+            codeHolder += "G90\r\nG1 Z66 X140 Y66\r\n";
+            break;
+          case 5:
+            codeHolder += "G90\r\nG1 Z66 X158 Y66\r\n";
+            break;
+          case 6:
+            codeHolder += "G90\r\nG1 Z66 X122 Y48 \r\n";
+            break;
+          case 7:
+            codeHolder += "G90\r\nG1 Z66 X140 Y48\r\n";
+            break;
+          case 8:
+            codeHolder += "G90\r\nG1 Z66 X158 Y48\r\n";
+            break;
+        }
+        if(print[i]){
+          var totalMats = this.state.coarse + this.state.fine;
+          var totalMats = totalMats / 0.9;
+          var j = 0;
+          var totalCos;
+
+          for(j = 0; j < this.state.matrix.length; j++){
+            totalCos += this.state.matrix[j];
           }
-        } else if(i % 3 === 1) {
-          codeHolder +=
-            "G1 X18" + "\r\n" +
-            "M400" + "\r\n";
-            if(print[i] === true) {
-              codeHolder +=
-                "G1 Z" + totalDown + "\r\n" +
-                "M400" + "\r\n"+
-                "G1 E40 F4000" + "\r\n" +
-                "M400" + "\r\n" +
-                "G1 E-25" + "\r\n" +
-                "M400" + "\r\n" +
-                "G1 Z" + totalUp + "\r\n";
-            }
-        } else if(i % 3 === 2) {
-          codeHolder +=
-            "G1 X18" + "\r\n" +
-            "M400" + "\r\n";
-            if(print[i] === true) {
-              codeHolder +=
-                "G1 Z" + totalDown + "\r\n" +
-                "M400" + "\r\n"+
-                "G1 E40 F4000" + "\r\n" +
-                "M400" + "\r\n" +
-                "G1 E-25" + "\r\n" +
-                "M400" + "\r\n" +
-                "G1 Z" + totalUp + "\r\n";
-            }
-          moveUp = true;
-        }
 
-        if(moveUp && y !== this.state.numLayers - 1) {
-          codeHolder +=
-            "G1 Y18" + "\r\n" +
-            "G1 X-36" + "\r\n";
+          var extrude = (0.0959) * totalMats / totalCos;
+
+          if(curMaterial === 1){
+            extrude = (0.0041) * totalMats / totalCos;
+          }
+
+          codeHolder += "G91\r\nG1 Z" + totalDown + "\r\n" +
+                        "M400" + "\r\n"+
+                        "G1 E" + this.state.matrix[i*(y+1)] * extrude + "F6000" + "\r\n" +
+                        "M400" + "\r\n" +
+                        "G1 E-25" + "\r\n" +
+                        "M400" + "\r\n" +
+                        "G1 Z" + totalUp + "\r\n" + "M400\r\n";
         }
-        moveUp = false;
       }
-      if(currLayer% 2 === 0) {
-        codeHolder += "M280 p0 " + angleNeg + "\r\n";
-      } else {
-        codeHolder += "M280 p0 " + angleNeg + "\r\n";
-      }
-      codeHolder += "G90" + "\r\n"; //changes back to absolute positioning
-      totalUp = totalUp + amountUp;
-      totalDown = totalDown + amountDown;
-      currLayer++;
     }
+
+    // for(y = 0; y < amountLayers; y ++){
+    //     if(y >= 1) {
+    //       codeHolder +=
+    //         "G1 X-36" + "\r\n";
+    //     }  //moves to the bottom left of the square
+    //     codeHolder +=
+    //       "M400" + "\r\n" +
+    //       "G91" + "\r\n"; //changes to relative positioning
+    //   for(i = 0; i < 9; i++) {
+    //     if(i % 3 === 0) {
+    //       if(print[i] === true){
+    //         codeHolder +=
+    //           "G1 Z" + totalDown + "\r\n" +
+    //           "M400" + "\r\n"+
+    //           "G1 E40 F4000" + "\r\n" +
+    //           "M400" + "\r\n" +
+    //           "G1 E-25" + "\r\n" +
+    //           "M400" + "\r\n" +
+    //           "G1 Z" + totalUp + "\r\n";
+    //       }
+    //     } else if(i % 3 === 1) {
+    //       codeHolder +=
+    //         "G1 X18" + "\r\n" +
+    //         "M400" + "\r\n";
+    //         if(print[i] === true) {
+    //           codeHolder +=
+    //             "G1 Z" + totalDown + "\r\n" +
+    //             "M400" + "\r\n"+
+    //             "G1 E40 F4000" + "\r\n" +
+    //             "M400" + "\r\n" +
+    //             "G1 E-25" + "\r\n" +
+    //             "M400" + "\r\n" +
+    //             "G1 Z" + totalUp + "\r\n";
+    //         }
+    //     } else if(i % 3 === 2) {
+    //       codeHolder +=
+    //         "G1 X18" + "\r\n" +
+    //         "M400" + "\r\n";
+    //         if(print[i] === true) {
+    //           codeHolder +=
+    //             "G1 Z" + totalDown + "\r\n" +
+    //             "M400" + "\r\n"+
+    //             "G1 E40 F4000" + "\r\n" +
+    //             "M400" + "\r\n" +
+    //             "G1 E-25" + "\r\n" +
+    //             "M400" + "\r\n" +
+    //             "G1 Z" + totalUp + "\r\n";
+    //         }
+    //       moveUp = true;
+    //     }
+    //
+    //     if(moveUp && y !== this.state.numLayers - 1) {
+    //       codeHolder +=
+    //         "G1 Y18" + "\r\n" +
+    //         "G1 X-36" + "\r\n";
+    //     }
+    //     moveUp = false;
+    //   }
+    //   if(currLayer% 2 === 0) {
+    //     codeHolder += "M280 p0 S20\r\n";
+    //   } else {
+    //     codeHolder += "M280 p0 S90\r\n";
+    //   }
+    //   codeHolder += "G90" + "\r\n"; //changes back to absolute positioning
+    //   totalUp = totalUp + amountUp;
+    //   totalDown = totalDown + amountDown;
+    //   currLayer++;
+    // }
 
     this.setState({
       code: codeHolder,
@@ -242,19 +302,34 @@ class HomeScreen extends Component {
       for(i = 0; i < this.state.numLayers; i++){
         grid.push(
           <div key={i}>
-            <TextField
-              id={String(counter)}
-              key={i}
-              label="Layer"
-              value={this.layerVal[i]}
-              onChange={(e) => this.handleLayerValChange(e, "side")}
-              margin="normal"
-              style={{width: '10%', marginLeft: '-15%'}}
-            />
-            <div style={{display: 'flex', justifyContent: 'space-evenly', verticalAlign: 'middle'}}>
-              <img style={{height: matrix[i*3] + 'px', whitespace: 'nowrap'}}src={this.state.source1} />
-              <img style={{height: matrix[i*3 + 1] + 'px', whitespace: 'nowrap'}}src={this.state.source2} />
-              <img style={{height: matrix[i*3 + 2] + 'px', whitespace: 'nowrap'}}src={this.state.source3} />
+            <div key={i}>
+              {/* <TextField
+                id={"d" + String(counter)}
+                key={"10" + i}
+                select
+                label="Material"
+                value={this.state.type[i]}
+                onChange={(e) => this.handleTypeChange(e, String(counter))}
+                margin="normal"
+                style={{marginLeft: '-30%'}}
+              >
+                <MenuItem id={String(counter)} value="Mix 1">Mix 1</MenuItem>
+                <MenuItem id={String(counter)} value="Mix 2">Mix 2</MenuItem>
+              </TextField> */}
+              <TextField
+                id={String(counter)}
+                key={"20" + i}
+                label="Layer"
+                value={this.layerVal[i]}
+                onChange={(e) => this.handleLayerValChange(e, "side")}
+                margin="normal"
+                style={{width: '10%', marginLeft: '-25%'}}
+              />
+              <div style={{display: 'flex', justifyContent: 'space-evenly', verticalAlign: 'middle'}}>
+                <img style={{height: matrix[i*3] + 'px', whitespace: 'nowrap'}}src={this.state.source1} />
+                <img style={{height: matrix[i*3 + 1] + 'px', whitespace: 'nowrap'}}src={this.state.source2} />
+                <img style={{height: matrix[i*3 + 2] + 'px', whitespace: 'nowrap'}}src={this.state.source3} />
+              </div>
             </div>
           </div>);
         counter++;
@@ -284,15 +359,28 @@ class HomeScreen extends Component {
       var counter = 0;
       for(i = 0; i < this.state.numLayers; i++){
         grid.push(
-          <div>
+          <div key={i}>
+            {/* <TextField
+              id={"d" + String(counter)}
+              key={"10" + i}
+              select
+              label="Material"
+              value={this.state.type[i]}
+              onChange={(e) => this.handleTypeChange(e, String(counter))}
+              margin="normal"
+              style={{marginLeft: '-30%'}}
+            >
+              <MenuItem id={String(counter)} value="Mix 1">Mix 1</MenuItem>
+              <MenuItem id={String(counter)} value="Mix 2">Mix 2</MenuItem>
+            </TextField> */}
             <TextField
               id={String(counter)}
-              key={i}
+              key={"20" + i}
               label="Layer"
               value={this.layerVal[i]}
               onChange={(e) => this.handleLayerValChange(e, "side")}
               margin="normal"
-              style={{width: '10%', marginLeft: '-15%'}}
+              style={{width: '10%', marginLeft: '-25%'}}
             />
             <div style={{display: 'flex', justifyContent: 'space-evenly', verticalAlign: 'middle'}}>
               <img style={{height: matrix[i*3] + 'px', whitespace: 'nowrap'}}src={this.state.source1} />
@@ -322,12 +410,16 @@ class HomeScreen extends Component {
       num = 6;
     }
 
+    var type = [];
     for(i = 0; i < num; i++){
       this.layerVal.push(1);
+      type.push("Mix 1")
     }
 
     var matrix = [];
+
     var i = 0, j = 0;
+
     for(i = 0; i < 3; i++){
       for(j = 0; j < num; j++){
         matrix.push(this.state.botVal[i] * this.layerVal[j] * 25);
@@ -337,9 +429,21 @@ class HomeScreen extends Component {
     this.setState({
       numLayers: num,
       matrix: matrix,
+      type: type,
     }, () => {
       this.createGrid();
     })
+  }
+
+  handleTypeChange(e, i){
+    var type = this.state.type;
+    type[parseInt(e.currentTarget.id)] = e.target.value;
+
+    this.setState({
+      type: type,
+    }, () => {
+      this.createGrid();
+    });
   }
 
   createGrid(){
@@ -350,14 +454,27 @@ class HomeScreen extends Component {
     for(i = 0; i < this.state.numLayers; i++){
       grid.push(
         <div key={i}>
+          {/* <TextField
+            id={"d" + String(counter)}
+            key={"10" + i}
+            select
+            label="Material"
+            value={this.state.type[i]}
+            onChange={(e) => this.handleTypeChange(e, String(counter))}
+            margin="normal"
+            style={{marginLeft: '-30%'}}
+          >
+            <MenuItem id={String(counter)} value="Mix 1">Mix 1</MenuItem>
+            <MenuItem id={String(counter)} value="Mix 2">Mix 2</MenuItem>
+          </TextField> */}
           <TextField
             id={String(counter)}
-            key={i}
+            key={"20" + i}
             label="Layer"
             value={this.layerVal[i]}
             onChange={(e) => this.handleLayerValChange(e, "side")}
             margin="normal"
-            style={{width: '10%', marginLeft: '-15%'}}
+            style={{width: '10%', marginLeft: '-25%'}}
           />
           <div style={{display: 'flex', justifyContent: 'space-evenly', verticalAlign: 'middle'}}>
             <img style={{height: this.state.matrix[i*3] + 'px', whitespace: 'nowrap'}}src={this.state.source1} />
@@ -423,7 +540,7 @@ class HomeScreen extends Component {
             value={this.layerVal[i]}
             onChange={(e) => this.handleLayerValChange(e, "side")}
             margin="normal"
-            style={{width: '10%', marginLeft: '-15%'}}
+            style={{width: '10%', marginLeft: '-25%'}}
           />
           <div style={{display: 'flex', justifyContent: 'space-evenly', verticalAlign: 'middle'}}>
             {showFirst &&
