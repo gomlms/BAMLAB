@@ -52,6 +52,7 @@ class HomeScreen extends Component {
     this.handleVolChange = this.handleVolChange.bind(this);
     this.handleLayerChange = this.handleLayerChange.bind(this);
     this.handleCode = this.handleCode.bind(this);
+    this.handleRetract = this.handleRetract.bind(this);
 
     this.state = {
       botVal: [1,1,1],
@@ -67,6 +68,7 @@ class HomeScreen extends Component {
       showThird: true,
       r45: "4.417",
       idp: "4.417",
+      retract: 0,
       type: [],
       coarse: "20.25",
       fine: "6.75",
@@ -109,7 +111,7 @@ class HomeScreen extends Component {
 
     var flowRate = "3000";
 
-    codeHolder += "G1 X-18 Y18" + "\r\n";
+    // codeHolder += "G1 X-18 Y18" + "\r\n"; this prevents the homing to go in the incorrect position
 
     if(this.state.curMaterial === 0) {
       cur = "G280 P0 S20\r\n";
@@ -183,7 +185,7 @@ class HomeScreen extends Component {
                         "M400" + "\r\n"+
                         "G1 E" + extrude + " F" + flowRate + "\r\n" +
                         "M400" + "\r\n" +
-                        "G1 E-25" + "\r\n" +
+                        "G1 E-" + extrude + "\r\n" + //replaced this.state.retract with extrude
                         "M400" + "\r\n" +
                         "G1 Z" + totalUp + "\r\n" + "M400\r\n";
         }
@@ -578,6 +580,12 @@ class HomeScreen extends Component {
     });
   }
 
+  handleRetract(e){
+    this.setState({
+      retract: e.target.value,
+    });
+  }
+
   render(){
 
     const textFieldStyle = {
@@ -691,6 +699,16 @@ class HomeScreen extends Component {
                   <MenuItem value="0">Mix 1</MenuItem>
                   <MenuItem value="1">Mix 2</MenuItem>
                 </TextField>
+              </div>
+              <div>
+                <TextField
+                  id="retract"
+                  label="Retraction Amount"
+                  value={this.state.retract}
+                  onChange={this.handleRetract}
+                  margin="normal"
+                  style={textFieldStyle}
+                />
               </div>
             </Paper>
             <div style={topBeakerBackground}>
