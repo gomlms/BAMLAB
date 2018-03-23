@@ -53,6 +53,8 @@ class HomeScreen extends Component {
     this.handleLayerChange = this.handleLayerChange.bind(this);
     this.handleCode = this.handleCode.bind(this);
     this.handleRetract = this.handleRetract.bind(this);
+    this.openMenu = this.openMenu.bind(this);
+    this.handleClose = this.handleClose.bind(this);
 
     this.state = {
       botVal: [1,1,1],
@@ -586,6 +588,25 @@ class HomeScreen extends Component {
     });
   }
 
+  openMenu(e){
+    this.setState({
+      currentPoint: e.currentTarget,
+      openMenu: true,
+    });
+  }
+
+  handleClose(e, mix){
+    if(mix){
+      this.setState({
+        curMaterial: parseInt(mix) - 1,
+        curMaterialText: "Mix " + mix,
+      });
+    }
+    this.setState({
+      openMenu: false,
+    });
+  }
+
   render(){
 
     const textFieldStyle = {
@@ -688,17 +709,18 @@ class HomeScreen extends Component {
                   margin="normal"
                   style={textFieldStyle}
                 />
-                <TextField
-                  select
-                  label="Material"
-                  value={this.state.curMaterialText}
-                  onChange={(e) => this.handleTypeChange(e)}
-                  margin="normal"
-                  style={{marginLeft: "20px", width: "35%"}}
+
+                <Button style={{marginLeft: '15px'}} variant="raised" color="primary" onClick={this.openMenu}>
+                  {this.state.curMaterialText}
+                </Button>
+                <Menu
+                  anchorEl={this.state.currentPoint}
+                  open={this.state.openMenu}
+                  onClose={(e) => this.handleClose(e)}
                 >
-                  <MenuItem value="0">Mix 1</MenuItem>
-                  <MenuItem value="1">Mix 2</MenuItem>
-                </TextField>
+                  <MenuItem onClick={(e) => this.handleClose(e,1)}>Mix 1</MenuItem>
+                  <MenuItem onClick={(e) => this.handleClose(e,2)}>Mix 2</MenuItem>
+                </Menu>
               </div>
               <div>
                 <TextField
