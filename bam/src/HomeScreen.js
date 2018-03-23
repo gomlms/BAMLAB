@@ -712,33 +712,33 @@ class HomeScreen extends Component {
               </div>
             </Paper>
             <div style={topBeakerBackground}>
-              <Button fab color={this.state.buttonColors[6]} onClick={() => this.enableColumn(6)} style={{outline: 'none'}} aria-label="add">
+              <Button variant="fab" color={this.state.buttonColors[6]} onClick={() => this.enableColumn(6)} style={{outline: 'none'}} aria-label="add">
                 <AddIcon />
               </Button>
-              <Button fab color={this.state.buttonColors[7]} onClick={() => this.enableColumn(7)} style={{outline: 'none', marginLeft: '2%'}} aria-label="add">
+              <Button variant="fab" color={this.state.buttonColors[7]} onClick={() => this.enableColumn(7)} style={{outline: 'none', marginLeft: '2%'}} aria-label="add">
                 <AddIcon />
               </Button>
-              <Button fab color={this.state.buttonColors[8]} onClick={() => this.enableColumn(8)} style={{outline: 'none', marginLeft: '2%'}} aria-label="add">
-                <AddIcon />
-              </Button>
-              <br/>
-              <Button fab color={this.state.buttonColors[3]} onClick={() => this.enableColumn(3)} style={{outline: 'none', marginTop: '2%'}} aria-label="add">
-                <AddIcon />
-              </Button>
-              <Button fab color={this.state.buttonColors[4]} onClick={() => this.enableColumn(4)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
-                <AddIcon />
-              </Button>
-              <Button fab color={this.state.buttonColors[5]} onClick={() => this.enableColumn(5)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
+              <Button variant="fab" color={this.state.buttonColors[8]} onClick={() => this.enableColumn(8)} style={{outline: 'none', marginLeft: '2%'}} aria-label="add">
                 <AddIcon />
               </Button>
               <br/>
-              <Button fab color={this.state.buttonColors[0]} onClick={() => this.enableColumn(0)} style={{outline: 'none', marginTop: '2%'}} aria-label="add">
+              <Button variant="fab" color={this.state.buttonColors[3]} onClick={() => this.enableColumn(3)} style={{outline: 'none', marginTop: '2%'}} aria-label="add">
                 <AddIcon />
               </Button>
-              <Button fab color={this.state.buttonColors[1]} onClick={() => this.enableColumn(1)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
+              <Button variant="fab" color={this.state.buttonColors[4]} onClick={() => this.enableColumn(4)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
                 <AddIcon />
               </Button>
-              <Button fab color={this.state.buttonColors[2]} onClick={() => this.enableColumn(2)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
+              <Button variant="fab" color={this.state.buttonColors[5]} onClick={() => this.enableColumn(5)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
+                <AddIcon />
+              </Button>
+              <br/>
+              <Button variant="fab" color={this.state.buttonColors[0]} onClick={() => this.enableColumn(0)} style={{outline: 'none', marginTop: '2%'}} aria-label="add">
+                <AddIcon />
+              </Button>
+              <Button variant="fab" color={this.state.buttonColors[1]} onClick={() => this.enableColumn(1)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
+                <AddIcon />
+              </Button>
+              <Button variant="fab" color={this.state.buttonColors[2]} onClick={() => this.enableColumn(2)} style={{outline: 'none', marginTop: '2%', marginLeft: '2%'}} aria-label="add">
                 <AddIcon />
               </Button>
             </div>
