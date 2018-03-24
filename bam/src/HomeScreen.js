@@ -117,12 +117,12 @@ class HomeScreen extends Component {
     // codeHolder += "G1 X-18 Y18" + "\r\n"; this prevents the homing to go in the incorrect position
 
     if(this.state.curMaterial === 0) {
-      cur = "G280 P0 S20\r\n";
-      prev = "G280 P0 S90\r\n";
+      cur = "G280 P0 S20\r\nT0\r\n";
+      prev = "G280 P0 S90\r\nT1\r\n";
       codeHolder += "G280 P0 S20\r\n";
     } else {
-      cur ="G280 P0 S90\r\n";
-      prev = "G280 P0 S20\r\n";
+      cur ="G280 P0 S90\r\nT0\r\n";
+      prev = "G280 P0 S20\r\nT1\r\n";
       codeHolder += "G280 P0 S90\r\n";
     }
 
@@ -188,8 +188,8 @@ class HomeScreen extends Component {
                         "M400" + "\r\n"+
                         "G1 E" + extrude + " F" + flowRate + "\r\n" +
                         "M400" + "\r\n" +
-                        "G1 E-" + extrude + "\r\n" + //replaced this.state.retract with extrude
-                        "M400" + "\r\n" +
+                        // "G1 E-" + extrude + "\r\n" + //replaced this.state.retract with extrude
+                        // "M400" + "\r\n" +
                         "G1 Z" + totalUp + "\r\n" + "M400\r\n";
         }
       }
