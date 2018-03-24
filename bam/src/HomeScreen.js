@@ -116,51 +116,50 @@ class HomeScreen extends Component {
 
     // codeHolder += "G1 X-18 Y18" + "\r\n"; this prevents the homing to go in the incorrect position
 
+    codeHolder += "G90\r\nG1 X124 Y48 Z66\r\n"
+
     if(this.state.curMaterial === 0) {
-      cur = "G280 P0 S20\r\nT0\r\n";
-      prev = "G280 P0 S90\r\nT1\r\n";
-      codeHolder += "G280 P0 S20\r\n";
+      cur = "M280 P0 S20\r\nT0\r\n";
+      prev = "M280 P0 S90\r\nT1\r\n";
+      codeHolder += "M280 P0 S20\r\n";
     } else {
-      cur ="G280 P0 S90\r\nT0\r\n";
-      prev = "G280 P0 S20\r\nT1\r\n";
-      codeHolder += "G280 P0 S90\r\n";
+      cur ="M280 P0 S90\r\nT1\r\n";
+      prev = "M280 P0 S20\r\nT0\r\n";
+      codeHolder += "M280 P0 S90\r\n";
     }
 
     for(y = 0; y < this.state.numLayers; y++){
-      codeHolder += this.materialOptions[0];
       for(i = 0; i < 9; i++){
-        codeHolder += "G90\r\nG1 Z66\r\n";
-        if(i % 2 === 0) {
-          cur = prev;
-          prev = cur;
-        }
+        codeHolder += "G91\r\n";
+        var temp = cur;
+        cur = prev;
+        prev = temp;
         switch(i){
           case 0:
-            codeHolder += "G1 Z66 X122 Y84\r\n";
             break;
           case 1:
-            codeHolder += "G1 Z66 X140 Y84\r\n";
+            codeHolder += "G1 X18\r\n";
             break;
           case 2:
-            codeHolder += "G1 Z66 X158 Y84\r\n";
+            codeHolder += "G1 X18\r\n";
             break;
           case 3:
-            codeHolder += "G1 Z66 X122 Y66\r\n";
+            codeHolder += "G1 X-36 Y18\r\n";
             break;
           case 4:
-            codeHolder += "G1 Z66 X140 Y66\r\n";
+            codeHolder += "G1 X18\r\n";
             break;
           case 5:
-            codeHolder += "G1 Z66 X158 Y66\r\n";
+            codeHolder += "G1 X18\r\n";
             break;
           case 6:
-            codeHolder += "G1 Z66 X122 Y48 \r\n";
+            codeHolder += "G1 X-36 Y18 \r\n";
             break;
           case 7:
-            codeHolder += "G1 Z66 X140 Y48\r\n";
+            codeHolder += "G1 X18\r\n";
             break;
           case 8:
-            codeHolder += "G1 Z66 X158 Y48\r\n";
+            codeHolder += "G1 X18\r\n";
             break;
         }
         if(print[i]){
@@ -185,12 +184,16 @@ class HomeScreen extends Component {
           extrude = Math.round(extrude / (0.001747) * 100) / 100;
 
           codeHolder += cur + "G91\r\nG1 Z" + totalDown + "\r\n" +
-                        "M400" + "\r\n"+
+                        // "G4 S9" + "\r\n"+
                         "G1 E" + extrude + " F" + flowRate + "\r\n" +
-                        "M400" + "\r\n" +
+                        // "G4 S2" + "\r\n" +
                         // "G1 E-" + extrude + "\r\n" + //replaced this.state.retract with extrude
                         // "M400" + "\r\n" +
                         "G1 Z" + totalUp + "\r\n" + "M400\r\n";
+
+          if(i === 9){
+            codeHolder += "G91\r\nG1 X-36 Y-36\r\n"
+          }
         }
       }
     }
