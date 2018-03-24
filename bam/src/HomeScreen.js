@@ -71,8 +71,9 @@ class HomeScreen extends Component {
       r45: "4.417",
       idp: "4.417",
       retract: 0,
+      openMenu: false,
       type: [],
-      coarse: "20.25",
+      coarse: "27",
       fine: "6.75",
       lecithin: "0.76",
       ipdi: "0.41",
@@ -163,7 +164,7 @@ class HomeScreen extends Component {
             break;
         }
         if(print[i]){
-          var totalMats = (parseFloat(this.state.coarse) + parseFloat(this.state.fine)) * 10 / 9;
+          var totalMats = (parseFloat(this.state.coarse)) * 10 / 9;
           var j = 0, k = 0;
           var totalCos = 0;
 
@@ -684,17 +685,9 @@ class HomeScreen extends Component {
               <div>
                 <TextField
                   id="coarse"
-                  label="Coarse Sand (g)"
+                  label="Total Solids Volume (g)"
                   value={this.state.coarse}
                   onChange={(e) => this.handleVolChange(e,3)}
-                  margin="normal"
-                  style={textFieldStyle}
-                />
-                <TextField
-                  id="fine"
-                  label="Fine Sand (g)"
-                  value={this.state.fine}
-                  onChange={(e) => this.handleVolChange(e,4)}
                   margin="normal"
                   style={textFieldStyle}
                 />
@@ -710,7 +703,7 @@ class HomeScreen extends Component {
                   style={textFieldStyle}
                 />
 
-                <Button style={{marginLeft: '15px'}} variant="raised" color="primary" onClick={this.openMenu}>
+                <Button style={{marginLeft: '30px'}} variant="raised" color="primary" onClick={this.openMenu}>
                   {this.state.curMaterialText}
                 </Button>
                 <Menu
@@ -722,7 +715,7 @@ class HomeScreen extends Component {
                   <MenuItem onClick={(e) => this.handleClose(e,2)}>Mix 2</MenuItem>
                 </Menu>
               </div>
-              <div>
+              {/* <div>
                 <TextField
                   id="retract"
                   label="Retraction Amount"
@@ -731,7 +724,7 @@ class HomeScreen extends Component {
                   margin="normal"
                   style={textFieldStyle}
                 />
-              </div>
+              </div> */}
             </Paper>
             <div style={topBeakerBackground}>
               <Button variant="fab" color={this.state.buttonColors[6]} onClick={() => this.enableColumn(6)} style={{outline: 'none'}} aria-label="add">
@@ -805,7 +798,7 @@ class HomeScreen extends Component {
           </div>
         </div>
         <div style={downloadStyle}>
-          <Button onClick={this.downloadTxtFile} style={{outline: 'none'}} raised size="small">
+          <Button onClick={this.downloadTxtFile} style={{outline: 'none'}} variant='raised' size="small">
             <img src="https://png.icons8.com/ios/50/000000/download-from-cloud-filled.png" />
           </Button>
         </div>
