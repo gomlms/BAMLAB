@@ -38,48 +38,46 @@ class Home extends Component {
     // Change in height seems to be linear, 140 seems like a good height to determine how far to go down
     this.baseHeight = 140;
 
+    // GCode Holder
+    this.gCode = "";
+
+    // GCode Base
+    this.base = "G90\r\n" + "G1 Z" + this.highPoint + "\r\n" + "M400\r\n" + "G1 X" + this.center.x + " Y" + this.center.y + "\r\n" + "M400\r\n" + "G91\r\n" + "T1\r\n";
+
     this.state = {
       diameter: 0,
       volume: 0,
-      height: 0,
-      base: "G90\r\n" + "G1 Z" + this.highPoint + "\r\n" + "M400\r\n" + "G1 X" + this.center.x + " Y" + this.center.y + "\r\n" + "M400\r\n" + "G91\r\n" + "T1\r\n",
-      gCode: ""
+      height: 0
     }
   }
 
   getBigBoy = () => {
-    var add = "";
-    var material1 = this.getExtrusionValue(1, this.percentMat1 * this.state.volume);
-    var material2 = this.getExtrusionValue(2, this.percentMat2 * this.state.volume);                                                    
-    add += "M280 P0 S" + this.matRotation1 + "\r\nG1 Z-" + this.highPoint - this.state.height + (this.highPoint - this.baseHeight) + "\r\nM400\r\n" + "G1 E" + material1 + " F4000\r\n" +      
-        "G4 S5\r\n" + "M4000\r\n" + "G1 Z" + this.highPoint - this.state.height + (this.highPoint - this.baseHeight) + "\r\nM400\r\n" + "M280 P0 S" + this.matRotation2 + "\r\n" + "M400\r\n" + 
-        "T0\r\n" + "G1 Z-" + this.highPoint - this.state.height + (this.highPoint - this.baseHeight) + 
-        "\r\nM400\r\n" + "G1 E" + material2 + "\r\nG4 S5\r\n" + "M400\r\n" + "G1 " + this.highPoint - this.state.height + (this.highPoint - this.baseHeight) + "\r\nM400\r\n";
-    this.setState({
-      gcode: add
-    })
+    var material1 = this.getExtrusionValue(0, this.percentMat1 * this.state.volume);
+    var material2 = this.getExtrusionValue(1, this.percentMat2 * this.state.volume);                                                    
+    this.gCode = this.base + "M280 P0 S" + this.matRotation1 + "\r\nG1 Z-" + (this.highPoint - this.state.height + (this.highPoint - this.baseHeight)) + "\r\nM400\r\n" + "G1 E" + material1 + " F4000\r\n";
+    this.gCode += "G4 S5\r\n" + "M400\r\n" + "G1 Z" + (this.highPoint - this.state.height + (this.highPoint - this.baseHeight)) + "\r\nM400\r\n" + "M280 P0 S" + this.matRotation2 + "\r\n" + "M400\r\n";
+    this.gCode += "T0\r\n" + "G1 Z-" + (this.highPoint - this.state.height + (this.highPoint - this.baseHeight) - (this.state.height / 4));
+    this.gCode += "\r\nM400\r\n" + "G1 E" + material2 + "\r\nG4 S5\r\n" + "M400\r\n" + "G1 Z" + (this.highPoint - this.state.height + (this.highPoint - this.baseHeight) - (this.state.height / 4)) + "\r\nM400\r\n";
+
+    console.log("Setting Big Boy");
   }
 
   getEqualBoy= () => {
-    var add = "";
     var incHeight = this.state.height / 3;
+    this.gCode = "";
 
     for(var i = 0; i < 3; i++){
-      this.getPointCode(i%2, incHeight, "G1 X" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
-      this.getPointCode((i + 1) % 2, incHeight, "G1 Y-" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
-      this.getPointCode(i % 2, incHeight, "G1 X-" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
-      this.getPointCode((i+1)%2, incHeight, "G1 X-" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
-      this.getPointCode(i%2, incHeight, "G1 Y" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
-      this.getPointCode((i+1)%2, incHeight, "G1 Y" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
-      this.getPointCode(i%2, incHeight, "G1 X" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
-      this.getPointCode((i+1)%2, incHeight, "G1 X" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
-      this.getPointCode(i%2, incHeight, "G1 X" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
+      this.gCode += this.getPointCode(i%2, incHeight, "G1 X" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
+      this.gCode += this.getPointCode((i + 1) % 2, incHeight, "G1 Y-" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
+      this.gCode += this.getPointCode(i%2, incHeight, "G1 Y" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
+      this.gCode += this.getPointCode((i+1)%2, incHeight, "G1 X-" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
+      this.gCode += this.getPointCode((i+1)%2, incHeight, "G1 Y" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
+      this.gCode += this.getPointCode(i % 2, incHeight, "G1 X-" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
+      this.gCode += this.getPointCode(i%2, incHeight, "G1 X" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
+      this.gCode += this.getPointCode((i+1)%2, incHeight, "G1 X" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
+      this.gCode += this.getPointCode(i%2, incHeight, "G1 X" + (this.state.diameter * 0.8)/2 + "\r\nM400\r\n");
       incHeight += this.state.height/3;
     }
-    
-    this.setState({
-      gcode: add
-    })
   }
 
   getPointCode = (matNum, incH, XY) => {
@@ -97,8 +95,8 @@ class Home extends Component {
     } else {
       e = e / 14;
     }
-    var output = "T" + matNum + "\r\nG1 Z-" + baseDrop + incH + "\r\nM400\r\n" + "G1 E" + e + " F4000\r\n";
-    output += "G4 S5\r\n" + "M400\r\n" + "G1 Z" + baseDrop + incH + "\r\nM400\r\n" + rotate + "M400\r\n" + XY + "M400\r\n";
+    var output = "T" + matNum + "\r\nG1 Z-" + baseDrop + (Math.round(incH * 100) / 100) + "\r\nM400\r\n" + "G1 E" + (Math.round(e * 100) / 100) + " F4000\r\n";
+    output += "G4 S5\r\n" + "M400\r\n" + "G1 Z" + baseDrop + (Math.round(incH * 100) / 100) + "\r\nM400\r\n" + rotate + "M400\r\n" + XY + "M400\r\n";
     return output;
   }
 
@@ -108,9 +106,9 @@ class Home extends Component {
     // Material 2 is Bulk Liquids
     switch(matNum){
       case 0:
-        return 6.56 * mlAmount - 3.01;
+        return Math.round((6.56 * mlAmount - 3.01) * 100) / 100;
       case 1:
-        return mlAmount;
+        return Math.round(mlAmount * 100) / 100;
     }
   }
  
@@ -125,8 +123,8 @@ class Home extends Component {
         this.getEqualBoy();
         break;
     }
-
-    var file = new Blob([this.state.gcode], { type: 'text/plain' });
+    console.log(this.gCode);
+    var file = new Blob([this.gCode], { type: 'text/plain' });
     element.href = URL.createObjectURL(file);
     element.download = "BAM Creation.gcode";
     element.click();
@@ -156,8 +154,8 @@ class Home extends Component {
           margin="normal"
         />
         <br />
-        <Button variant='raised' onClick={() => this.downloadGcode(1)}>Meta-structure 1</Button>
-        <Button variant='raised' style={{marginLeft: 50}} onClick={() => this.downloadGcode(2)}>Meta-structure 2</Button>
+        <Button variant='raised' onClick={() => this.downloadGcode(0)}>Meta-structure 1</Button>
+        <Button variant='raised' style={{marginLeft: 50}} onClick={() => this.downloadGcode(1)}>Meta-structure 2</Button>
       </div>
     );
   }
