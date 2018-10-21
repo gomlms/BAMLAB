@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import FirstPoint from './FirstPoint.js';
+import FirstPoint from './OldStuff/FirstPoint.js';
 import SecondPoint from './SecondPoint.js';
 import ThirdPoint from './ThirdPoint.js';
 

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import { Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import Layer from './Layer.js';
+import Layer from '../Layer.js';
 import Buttons from './Buttons.js';
 import Grid from './GridMultiplier';
 import $ from 'jquery';
@@ -74,6 +74,10 @@ class HomeScreen extends Component {
       openMenu: false,
       type: [],
       coarse: "27",
+      space: 12,
+      beakerHeight: 70,
+      materialHeight: 50,
+      bufferSize: 11, //Keep this as 11 because it already has a buffer of 11
       fine: "6.75",
       lecithin: "0.76",
       ipdi: "0.41",
@@ -101,9 +105,9 @@ class HomeScreen extends Component {
     var y = 0;
     var currLayer = 1;
     var moveUp = false;
-    var amountUp = Math.round(100 / (this.state.numLayers + 1) * 100) / 100;
+    var amountUp = Math.round(this.state.beakerHeight / (this.state.numLayers + 1) * 100) / 100;
     var amountDown = -amountUp;
-    var totalUp = 100 - amountUp;
+    var totalUp = this.state.beakerHeight - amountUp;
     var totalDown = -totalUp;
     var codeHolder = this.state.code;
     var angleNeg = "90";
@@ -116,7 +120,7 @@ class HomeScreen extends Component {
 
     // codeHolder += "G1 X-18 Y18" + "\r\n"; this prevents the homing to go in the incorrect position
 
-    codeHolder += "G90\r\nG1 X124 Y48 Z66\r\n"
+    codeHolder += "G91\r\nG1 X120 Y47 Z42\r\n"
 
     if(this.state.curMaterial === 0) {
       cur = "M280 P0 S20\r\nT0\r\n";
@@ -138,28 +142,28 @@ class HomeScreen extends Component {
           case 0:
             break;
           case 1:
-            codeHolder += "G1 X18\r\n";
+            codeHolder += "G1 X" + this.state.space  + "\r\n";
             break;
           case 2:
-            codeHolder += "G1 X18\r\n";
+            codeHolder += "G1 X" + this.state.space + "\r\n";
             break;
           case 3:
-            codeHolder += "G1 X-36 Y18\r\n";
+            codeHolder += "G1 X-" + (2 * this.state.space) +  "Y" + this.state.space + "\r\n";
             break;
           case 4:
-            codeHolder += "G1 X18\r\n";
+            codeHolder += "G1 X" + this.state.space + "\r\n";
             break;
           case 5:
-            codeHolder += "G1 X18\r\n";
+            codeHolder += "G1 X" + this.state.space + "\r\n";
             break;
           case 6:
-            codeHolder += "G1 X-36 Y18 \r\n";
+            codeHolder += "G1 X-" + (2 * this.state.space) +  "Y" + this.state.space + "\r\n";
             break;
           case 7:
-            codeHolder += "G1 X18\r\n";
+            codeHolder += "G1 X" + this.state.space + "\r\n";
             break;
           case 8:
-            codeHolder += "G1 X18\r\n";
+            codeHolder += "G1 X" + this.state.space + "\r\n";
             break;
         }
         if(print[i]){
@@ -183,16 +187,19 @@ class HomeScreen extends Component {
 
           extrude = Math.round(extrude / (0.001747) * 100) / 100;
 
-          codeHolder += cur + "G91\r\nG1 Z" + totalDown + "\r\n" +
+          var zHolder = this.state.beakerHeight - this.state.materialHeight + this.state.bufferSize + (this.state.materialHeight - (2 * this.state.bufferSize));
+          var betterHolder = zHolder + (y * Math.round(this.state.materialHeight - (this.state.bufferSize) / (this.state.numLayers + 1) * 100) / 100);
+
+          codeHolder += cur + "G91\r\nG1 Z-" + betterHolder + '\r\n' +
                         // "G4 S9" + "\r\n"+
                         "G1 E" + extrude + " F" + flowRate + "\r\n" +
                         // "G4 S2" + "\r\n" +
                         // "G1 E-" + extrude + "\r\n" + //replaced this.state.retract with extrude
                         // "M400" + "\r\n" +
-                        "G1 Z" + totalUp + "\r\n" + "M400\r\n";
+                        "G1 Z" + betterHolder + "\r\n" + "M400\r\n";
 
-          if(i === 9){
-            codeHolder += "G91\r\nG1 X-36 Y-36\r\n"
+          if(i === 8){
+            codeHolder += "G91\r\nG1 X-" + (2 * this.state.space) + " Y-" + (2 * this.state.space) + "\r\n"
           }
         }
       }
